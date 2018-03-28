@@ -1,6 +1,7 @@
 //include SDL2 libraries
 #include <SDL.h>
 #include "ppm.h"
+#include "scene.h"
 
 //C++ includes
 #include <iostream>
