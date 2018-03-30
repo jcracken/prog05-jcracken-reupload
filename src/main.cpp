@@ -129,19 +129,15 @@ int main(int argc, char** argv){
 				quit = true;
 			break;
 			case SDLK_LEFT: //if left arrow key, move eye left and forward
-				image->setData(sc->returnData(), sc->returnHeight(), sc->returnWidth() * 3);
 				up = true;
 			break;
 			case SDLK_RIGHT: //if right arrow key, move eye right and forward
-				image->setData(sc->returnData(), sc->returnHeight(), sc->returnWidth() * 3);
 				up = true;
 			break;
 			case SDLK_UP:
-				image->setData(sc->returnData(), sc->returnHeight(), sc->returnWidth() * 3);
 				up = true;
 			break;
 			case SDLK_DOWN:
-				image->setData(sc->returnData(), sc->returnHeight(), sc->returnWidth() * 3);
 				up = true;
 			break;
 			default:
@@ -178,7 +174,6 @@ int main(int argc, char** argv){
 
 	//clear memory
 	delete image;
-	delete sc;
 
   return 0;
 }

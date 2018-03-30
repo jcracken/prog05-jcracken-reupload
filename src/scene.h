@@ -14,6 +14,7 @@
 
 #include "vect.h"
 #include "light.h"
+#include "obj.h"
 
 class scene { //main class, used to ray trace and store color values
   private:
@@ -23,8 +24,11 @@ class scene { //main class, used to ray trace and store color values
     vect lookat;
     vect up;
     float angle;
+	float nearDepth;
+	float farDepth;
     int samples;
 	std::vector<light> lights;
+	std::vector<obj> objects;
   public:
     scene();
     int returnWidth();
