@@ -26,7 +26,6 @@ class scene { //main class, used to ray trace and store color values
     float angle;
 	float nearDepth;
 	float farDepth;
-    int samples;
 	std::vector<light> lights;
 	std::vector<obj> objects;
   public:

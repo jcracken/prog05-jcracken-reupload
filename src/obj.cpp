@@ -319,3 +319,19 @@ void obj::subdivide_ug(float lambda) {
 	this->points.swap(newPoints);
 	this->storeData();
 }
+
+void obj::setAmbient(vect am) {
+	this->ambient.setColor(am);
+}
+
+void obj::setDiffuse(vect dif) {
+	this->diffuse.setColor(dif);
+}
+
+void obj::setSpecular(vect spec) {
+	this->specular.setColor(spec);
+}
+
+void obj::setPhong(float phong) {
+	this->phong = phong;
+}

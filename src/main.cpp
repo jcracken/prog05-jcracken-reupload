@@ -45,15 +45,17 @@ int main(int argc, char** argv){
 
 	//create vars for main
 	ppm* image = new ppm();
+	scene* sc = new scene();
 	bool up = false;
 
 	//populate ppm
 	if(argc < 3){
-		std::cout << "usage: prog03 input output" << std::endl;
+		std::cout << "usage: prog05 input output" << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	//load in data and store it
+	sc->acquireData(argv[1]);
 
 	//Start up SDL and make sure it went ok
 	if (SDL_Init(SDL_INIT_VIDEO) != 0){

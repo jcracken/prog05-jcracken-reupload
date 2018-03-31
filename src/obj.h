@@ -4,6 +4,7 @@
 #include "vect.h"
 #include "edge.h"
 #include "triangle.h"
+#include "color.h"
 #include <vector>
 #include <string>
 #include <fstream>
@@ -19,6 +20,10 @@ private:
 	std::vector<edge> edges; //list of edges generated from above
 	std::vector<triangle> triangles; //list of triangles generated from above
 	std::vector<std::vector<int>> pointConns; //kind of a jerry rig; 2D vector that stores all point connections
+	color ambient;
+	color diffuse;
+	color specular;
+	float phong;
 public:
 	obj(); //constructor
 	void readData(std::string filename); //read in data from file and store it in points and faces
@@ -26,5 +31,9 @@ public:
 	void storeData(); //store data from points and faces in edges, triangles and pointconns
 	void subdivide(); //loop subdivision
 	void subdivide_ug(float lambda);
+	void setAmbient(vect am);
+	void setDiffuse(vect dif);
+	void setSpecular(vect spec);
+	void setPhong(float phong);
 };
 #endif

@@ -8,7 +8,6 @@ class color {
     vect col;
   public:
     color();
-    color( const color &obj );
     vect getColor();
     void setColor(vect col);
 };
