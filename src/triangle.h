@@ -9,6 +9,7 @@ class triangle {
 private:
 	std::vector<vect*> points; //the three points that make up this triangle
 	std::vector<edge*> edges; //the three edges that make up this triangle
+	std::vector<vect> norm;
 public:
 	triangle(); //constructor
 	vect thirdPoint(vect head, vect tail); //finds the third point that aren't the two passed in

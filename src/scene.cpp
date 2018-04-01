@@ -34,15 +34,15 @@ int scene::returnHeight(){ //returns height
   return this->height;
 }
 
-vect scene::getEye(){ //returns eye
+vect4 scene::getEye(){ //returns eye
   return this->eye;
 }
 
-vect scene::getLookAt(){ //returns lookat
+vect4 scene::getLookAt(){ //returns lookat
   return this->lookat;
 }
 
-vect scene::getUp(){ //returns up
+vect4 scene::getUp(){ //returns up
   return this->up;
 }
 
@@ -82,19 +82,19 @@ void scene::acquireData(std::string name) {
 					iss >> temp[0];
 					iss >> temp[1];
 					iss >> temp[2];
-					eye = vect(temp[0], temp[1], temp[2]);
+					eye = vect4(temp[0], temp[1], temp[2], 1.0);
 				break;
 				case 'l': //lookat
 					iss >> temp[0];
 					iss >> temp[1];
 					iss >> temp[2];
-					lookat = vect(temp[0], temp[1], temp[2]);
+					lookat = vect4(temp[0], temp[1], temp[2], 1.0);
 				break;
 				case 'u': //up
 					iss >> temp[0];
 					iss >> temp[1];
 					iss >> temp[2];
-					up = vect(temp[0], temp[1], temp[2]);
+					up = vect4(temp[0], temp[1], temp[2], 0.0);
 				break;
 				case 'f': //fov
 					iss >> angle;

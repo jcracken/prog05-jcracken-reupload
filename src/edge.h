@@ -22,5 +22,6 @@ public:
 	vect* getHead();
 	vect* getTail();
 	bool isPart(vect point); //checks to see if a point is the head or tail of this edge
+	vect getVecRep();
 };
 #endif

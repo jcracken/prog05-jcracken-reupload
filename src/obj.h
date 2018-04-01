@@ -5,6 +5,7 @@
 #include "edge.h"
 #include "triangle.h"
 #include "color.h"
+#include "vect4.h"
 #include <vector>
 #include <string>
 #include <fstream>
@@ -20,6 +21,7 @@ private:
 	std::vector<edge> edges; //list of edges generated from above
 	std::vector<triangle> triangles; //list of triangles generated from above
 	std::vector<std::vector<int>> pointConns; //kind of a jerry rig; 2D vector that stores all point connections
+	std::vector<vect4> pointNorms;
 	color ambient;
 	color diffuse;
 	color specular;
@@ -35,5 +37,6 @@ public:
 	void setDiffuse(vect dif);
 	void setSpecular(vect spec);
 	void setPhong(float phong);
+	void pointPopulate();
 };
 #endif

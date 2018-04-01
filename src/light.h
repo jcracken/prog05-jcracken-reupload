@@ -2,23 +2,25 @@
 #define LIGHT_H
 
 #include "color.h"
-#include "vect.h"
+#include "vect4.h"
 
 class light {
   private:
-    vect loc;
+    vect4 loc;
     color col;
-    vect a;
-    vect b;
+    vect4 a;
+    vect4 b;
   public:
     light();
     void setLoc(vect loc);
     void setCol(vect col);
     void setA(vect a);
+	void setA(vect4 a);
     void setB(vect b);
-    vect getLoc();
+	void setB(vect4 b);
+    vect4 getLoc();
     color getCol();
-    vect getA();
-	vect getB();
+    vect4 getA();
+	vect4 getB();
 };
 #endif

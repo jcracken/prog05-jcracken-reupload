@@ -13,6 +13,7 @@
 #include <random>
 
 #include "vect.h"
+#include "vect4.h"
 #include "light.h"
 #include "obj.h"
 
@@ -20,9 +21,9 @@ class scene { //main class, used to render everything
   private:
     int width;
     int height;
-    vect eye;
-    vect lookat;
-    vect up;
+    vect4 eye;
+    vect4 lookat;
+    vect4 up;
     float angle;
 	float nearDepth;
 	float farDepth;
@@ -32,9 +33,9 @@ class scene { //main class, used to render everything
     scene();
     int returnWidth();
     int returnHeight();
-	vect getEye();
-	vect getLookAt();
-	vect getUp();
+	vect4 getEye();
+	vect4 getLookAt();
+	vect4 getUp();
     float** returnData();
     float returnAngle();
     void acquireData(std::string name);

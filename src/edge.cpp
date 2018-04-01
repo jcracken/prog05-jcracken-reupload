@@ -56,3 +56,7 @@ vect * edge::getTail() {
 bool edge::isPart(vect point) { //is the point passed in a head or a tail of this edge?
 	return (this->head->comp(point) || this->tail->comp(point));
 }
+
+vect edge::getVecRep() {
+	return vect(this->head->getArr()[0] - this->tail->getArr()[0], this->head->getArr()[1] - this->tail->getArr()[1], this->head->getArr()[2] - this->tail->getArr()[2]);
+}

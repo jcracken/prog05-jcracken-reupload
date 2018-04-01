@@ -2,7 +2,7 @@
 #define MATRIX_H
 
 #include <vector>
-#include "vect.h"
+#include "vect4.h"
 
 class matrix {
 private:
@@ -13,6 +13,6 @@ public:
 	void setVal(int x, int y, float val);
 	float getVal(int x, int y);
 	void mult(matrix* other, matrix* ret);
-	void mult(vect* other, matrix* ret);
+	void mult(vect4* other, matrix* ret);
 };
 #endif

@@ -335,3 +335,20 @@ void obj::setSpecular(vect spec) {
 void obj::setPhong(float phong) {
 	this->phong = phong;
 }
+
+void obj::pointPopulate() {
+	unsigned int i, j, k = 0;
+	vect temp = vect(0, 0, 0);
+	for (i = 0; i < points.size(); i++) {
+		for (j = 0; j < triangles.size(); j++) {
+			if (triangles.at(j).getPoint(0).comp(points.at(i)) || triangles.at(j).getPoint(1).comp(points.at(i)) || triangles.at(j).getPoint(2).comp(points.at(i))) {
+				vect t = triangles.at(j).getEdge(0)->getVecRep().crossProduct(&triangles.at(j).getEdge(1)->getVecRep());
+				temp.add(&t);
+				k++;
+			}
+		}
+		temp.multConst(1 / k);
+		pointNorms.push_back(vect4(temp, 0.0));
+		temp = vect(0, 0, 0);
+	}
+}

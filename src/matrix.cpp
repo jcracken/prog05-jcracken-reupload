@@ -28,7 +28,7 @@ void matrix::mult(matrix * other, matrix * ret){
 	}
 }
 
-void matrix::mult(vect * other, matrix * ret){
+void matrix::mult(vect4 * other, matrix * ret){
 	int i, j;
 	float temp;
 	for (i = 0; i < 4; i++) {
