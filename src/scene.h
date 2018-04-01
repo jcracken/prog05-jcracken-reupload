@@ -16,7 +16,7 @@
 #include "light.h"
 #include "obj.h"
 
-class scene { //main class, used to ray trace and store color values
+class scene { //main class, used to render everything
   private:
     int width;
     int height;
