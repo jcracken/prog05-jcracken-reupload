@@ -156,3 +156,34 @@ void scene::acquireData(std::string name) {
 	}
 	input.close();
 }
+
+void scene::setup() {
+	float w[3];
+	float* u;
+	vect temp;
+	w[0] = -1.0 * this->lookat.getArr()[0] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
+	w[1] = -1.0 * this->lookat.getArr()[1] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
+	w[2] = -1.0 * this->lookat.getArr()[2] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
+	this->w = vect4(w[0], w[1], w[2], 1.0);
+
+	temp = this->up.crossProduct(&this->w);
+
+	u = temp.getArr();
+
+	u[0] = u[0] / sqrt(powf(u[0], 2) + powf(u[1], 2) + powf(u[2], 2));
+	u[1] = u[1] / sqrt(powf(u[0], 2) + powf(u[1], 2) + powf(u[2], 2));
+	u[2] = u[2] / sqrt(powf(u[0], 2) + powf(u[1], 2) + powf(u[2], 2));
+	this->u = vect4(u[0], u[1], u[2], 1.0);
+
+	temp = this->w.crossProduct(&vect4(u[0], u[1], u[2], 1.0));
+	this->v = vect4(temp, 1.0);
+
+	float dist = powf((powf(this->eye.getArr()[0] - this->lookat.getArr()[0], 2)) + (powf(this->eye.getArr()[1] - this->lookat.getArr()[1], 2)) + (powf(this->eye.getArr()[2] - this->lookat.getArr()[2], 2)), 0.5);
+	float imageHeight = std::tan(this->angle / 2.0) * dist; //calculate image height
+	float imageWidth = std::tan((this->angle * this->width / this->height) / 2.0) * dist; //calculate image width
+
+	this->r = this->lookat.dotProduct(&this->u) - 1.0 + imageWidth / 2.0; //calculations for vars used in pixel locs
+	this->l = this->lookat.dotProduct(&this->u) - 1.0 - imageWidth / 2.0;
+	this->t = this->lookat.dotProduct(&this->v) - 1.0 + imageHeight / 2.0;
+	this->b = this->lookat.dotProduct(&this->v) - 1.0 - imageHeight / 2.0;
+}

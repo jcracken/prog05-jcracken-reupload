@@ -24,6 +24,13 @@ class scene { //main class, used to render everything
     vect4 eye;
     vect4 lookat;
     vect4 up;
+	vect4 u;
+	vect4 v;
+	vect4 w;
+	float r;
+	float l;
+	float t;
+	float b;
     float angle;
 	float nearDepth;
 	float farDepth;
@@ -39,5 +46,6 @@ class scene { //main class, used to render everything
     float** returnData();
     float returnAngle();
     void acquireData(std::string name);
+	void setup();
 };
 #endif
