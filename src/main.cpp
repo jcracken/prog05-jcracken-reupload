@@ -56,6 +56,7 @@ int main(int argc, char** argv){
 
 	//load in data and store it
 	sc->acquireData(argv[1]);
+	sc->setup();
 
 	//Start up SDL and make sure it went ok
 	if (SDL_Init(SDL_INIT_VIDEO) != 0){
