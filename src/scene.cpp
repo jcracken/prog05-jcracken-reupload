@@ -220,4 +220,9 @@ void scene::setup() {
 	M_vp.setVal(3, 3, 1.0);
 	M_vp.setVal(0, 3, ((this->width - 1.0) / 2.0));
 	M_vp.setVal(1, 3, ((this->height - 1.0) / 2.0));
+
+	mTemp = matrix();
+
+	M_vp.mult(&M_per, &mTemp);
+	mTemp.mult(&M_cam, &M);
 }
