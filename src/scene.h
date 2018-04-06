@@ -16,6 +16,7 @@
 #include "vect4.h"
 #include "light.h"
 #include "obj.h"
+#include "matrix.h"
 
 class scene { //main class, used to render everything
   private:
@@ -27,6 +28,10 @@ class scene { //main class, used to render everything
 	vect4 u;
 	vect4 v;
 	vect4 w;
+	matrix M_vp;
+	matrix M_per;
+	matrix M_cam;
+	matrix M;
 	float r;
 	float l;
 	float t;

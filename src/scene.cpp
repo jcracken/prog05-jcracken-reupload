@@ -161,6 +161,8 @@ void scene::setup() {
 	float w[3];
 	float* u;
 	vect temp;
+	matrix mTemp, mT2;
+	int i;
 	w[0] = -1.0 * this->lookat.getArr()[0] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
 	w[1] = -1.0 * this->lookat.getArr()[1] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
 	w[2] = -1.0 * this->lookat.getArr()[2] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
@@ -186,4 +188,36 @@ void scene::setup() {
 	this->l = imageWidth / -2.0;
 	this->t = imageHeight / 2.0;
 	this->b = imageHeight / -2.0;
+
+	//M_per
+	M_per.setVal(0, 0, ((2 * this->nearDepth) / (r - l)));
+	M_per.setVal(0, 2, ((l + r) / (l - r)));
+	M_per.setVal(1, 1, ((2 * this->nearDepth) / (t - b)));
+	M_per.setVal(1, 2, ((b + t) / (b - t)));
+	M_per.setVal(2, 2, ((this->farDepth + this->nearDepth) / (this->nearDepth - this->farDepth)));
+	M_per.setVal(2, 3, ((2 * this->nearDepth * this->farDepth) / (this->farDepth - this->nearDepth)));
+
+	//M_cam
+	for (i = 0; i < 3; i++) {
+		mTemp.setVal(0, i, this->u.getArr()[i]);
+		mTemp.setVal(1, i, this->v.getArr()[i]);
+		mTemp.setVal(2, i, this->w.getArr()[i]);
+	}
+	mTemp.setVal(3, 3, 1.0);
+	for (i = 0; i < 4; i++) {
+		mT2.setVal(i, i, 1.0);
+	}
+	mT2.setVal(0, 3, -1.0 * this->eye.getArr()[0]);
+	mT2.setVal(1, 3, -1.0 * this->eye.getArr()[1]);
+	mT2.setVal(2, 3, -1.0 * this->eye.getArr()[2]);
+
+	mTemp.mult(&mT2, &M_cam);
+
+	//M_vp
+	M_vp.setVal(0, 0, (this->width / 2.0));
+	M_vp.setVal(1, 1, (this->height / 2.0));
+	M_vp.setVal(2, 2, 1.0);
+	M_vp.setVal(3, 3, 1.0);
+	M_vp.setVal(0, 3, ((this->width - 1.0) / 2.0));
+	M_vp.setVal(1, 3, ((this->height - 1.0) / 2.0));
 }
