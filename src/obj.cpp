@@ -343,6 +343,7 @@ void obj::pointPopulate() {
 		for (j = 0; j < triangles.size(); j++) {
 			if (triangles.at(j).getPoint(0).comp(points.at(i)) || triangles.at(j).getPoint(1).comp(points.at(i)) || triangles.at(j).getPoint(2).comp(points.at(i))) {
 				vect t = triangles.at(j).getEdge(0)->getVecRep().crossProduct(&triangles.at(j).getEdge(1)->getVecRep());
+				triangles.at(j).populateNorm(t);
 				temp.add(&t);
 				k++;
 			}
@@ -351,4 +352,12 @@ void obj::pointPopulate() {
 		pointNorms.push_back(vect4(temp, 0.0));
 		temp = vect(0, 0, 0);
 	}
+}
+
+std::vector<vect>* obj::getPoints() {
+	return &this->points;
+}
+
+std::vector<triangle> obj::getTriangles() {
+	return this->triangles;
 }

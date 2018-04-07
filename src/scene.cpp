@@ -6,7 +6,7 @@ scene::scene(){ //constructor
   this->angle = 0.0;
 }
 
-float** scene::returnData(){ //converts data stored locally into a 2D float array and returns it
+float** scene::returnData(int type){ //converts data stored locally into a 2D float array and returns it
   int i, j, a = 0, b = 0;
   float** returnData;
   returnData = new float*[this->height];
@@ -15,12 +15,28 @@ float** scene::returnData(){ //converts data stored locally into a 2D float arra
   float* temp;
   for(i = 0; i < this->height; i++){
     for(j = 0; j < this->width; j++){
-      //temp = (this->data[i][j]).getColor();
-      returnData[a][b] = temp[0];
-      returnData[a][b + 1] = temp[1];
-      returnData[a][b + 2] = temp[3];
-      a++;
-      b = b + 3;
+		if (type == 0) { //flat
+			temp = (this->data[i][j]).getArr();
+			returnData[a][b] = temp[0];
+			returnData[a][b + 1] = temp[1];
+			returnData[a][b + 2] = temp[3];
+			a++;
+			b = b + 3;
+		} else if (type == 1) { //gourand
+			temp = (this->data[i][j]).getArr();
+			returnData[a][b] = temp[0];
+			returnData[a][b + 1] = temp[1];
+			returnData[a][b + 2] = temp[3];
+			a++;
+			b = b + 3;
+		} else { //phong
+			temp = (this->data[i][j]).getArr();
+			returnData[a][b] = temp[0];
+			returnData[a][b + 1] = temp[1];
+			returnData[a][b + 2] = temp[3];
+			a++;
+			b = b + 3;
+		}
     }
   }
   return returnData;
@@ -162,7 +178,7 @@ void scene::setup() {
 	float* u;
 	vect temp;
 	matrix mTemp, mT2;
-	int i;
+	unsigned int i;
 	w[0] = -1.0 * this->lookat.getArr()[0] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
 	w[1] = -1.0 * this->lookat.getArr()[1] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
 	w[2] = -1.0 * this->lookat.getArr()[2] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
@@ -225,4 +241,53 @@ void scene::setup() {
 
 	M_vp.mult(&M_per, &mTemp);
 	mTemp.mult(&M_cam, &M);
+	
+	for (i = 0; i < this->objects.size(); i++) {
+		std::vector<vect>* t = this->objects.at(i).getPoints();
+		for (unsigned int j = 0; j < t->size(); t++) {
+			vect4 t1 = vect4(t->at(j), 1.0);
+			M.mult(&t1, &mTemp);
+			t->at(j) = vect(mTemp.getVal(0, 0), mTemp.getVal(1, 0), mTemp.getVal(2, 0));
+		}
+		this->objects.at(i).storeData();
+	}
+	this->genPixelData(imageHeight, imageWidth);
+}
+
+void scene::draw() {
+	for (unsigned int i = 0; i < this->objects.size(); i++) {
+		for (unsigned int j = 0; i < this->objects.at(i).getTriangles().size(); j++) {
+			for (unsigned int m = 0; m < this->height; m++) {
+				for (unsigned int n = 0; n < this->width; n++) {
+					if (this->objects.at(i).getTriangles().at(j).intersect(data[m][n])) {
+						//do something
+					}
+				}
+			}
+		}
+	}
+}
+
+vect scene::shading(vect n, obj o) {
+	float light = 0.0;
+	for (unsigned int i = 0; i < lights.size(); i++) {
+		light = 0;
+	}
+	return vect();
+}
+
+void scene::genPixelData(float imageHeight, float imageWidth) {
+	data = new vect*[this->height];
+	for (unsigned int i = 0; i < this->height; i++) {
+		data[i] = new vect[this->width];
+	}
+	pixelLoc = new vect*[this->height];
+	for (unsigned int i = 0; i < this->height; i++) {
+		pixelLoc[i] = new vect[this->width];
+	}
+	for (unsigned int i = 0; i < this->height; i++) {
+		for (unsigned int j = 0; j < this->width; j++) {
+			pixelLoc[i][j] = vect(imageWidth / -2.0 + j, imageHeight / -2.0 + i, nearDepth);
+		}
+	}
 }

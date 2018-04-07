@@ -27,3 +27,11 @@ vect triangle::getPoint(int num) { //easier than passing back a vector
 edge * triangle::getEdge(int num) { //easier than passing back a vector
 	return this->edges.at(num);
 }
+
+void triangle::populateNorm(vect n) {
+	this->norm = vect4(n, 0.0);
+}
+
+bool triangle::intersect(vect v) { //todo
+	return false;
+}

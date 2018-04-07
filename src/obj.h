@@ -38,5 +38,7 @@ public:
 	void setSpecular(vect spec);
 	void setPhong(float phong);
 	void pointPopulate();
+	std::vector<vect>* getPoints();
+	std::vector<triangle> getTriangles();
 };
 #endif

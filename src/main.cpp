@@ -47,6 +47,7 @@ int main(int argc, char** argv){
 	ppm* image = new ppm();
 	scene* sc = new scene();
 	bool up = false;
+	int type = 0;
 
 	//populate ppm
 	if(argc < 3){
@@ -57,6 +58,7 @@ int main(int argc, char** argv){
 	//load in data and store it
 	sc->acquireData(argv[1]);
 	sc->setup();
+	image->setData(sc->returnData(type), sc->returnHeight(), 3 * sc->returnWidth());
 
 	//Start up SDL and make sure it went ok
 	if (SDL_Init(SDL_INIT_VIDEO) != 0){
@@ -143,6 +145,18 @@ int main(int argc, char** argv){
 			case SDLK_DOWN:
 				up = true;
 			break;
+			case SDLK_f:
+				up = true;
+				type = 0;
+			break;
+			case SDLK_g:
+				up = true;
+				type = 1;
+			break;
+			case SDLK_p:
+				up = true;
+				type = 2;
+			break;
 			default:
 			break;
         }
@@ -150,6 +164,7 @@ int main(int argc, char** argv){
     }
 
 		if(up){ //if the image was updated
+			image->setData(sc->returnData(type), sc->returnHeight(), 3 * sc->returnWidth());
 			SDL_UpdateTexture(imageTexture, NULL, image->returnData(), 3*image->returnWidth());
 			renderTexture(imageTexture, rendererImage, 0, 0);
 			SDL_RenderPresent(rendererImage);

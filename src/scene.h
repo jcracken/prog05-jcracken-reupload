@@ -38,9 +38,13 @@ class scene { //main class, used to render everything
 	float b;
     float angle;
 	float nearDepth;
+	vect** data;
+	vect** pixelLoc;
 	float farDepth;
 	std::vector<light> lights;
 	std::vector<obj> objects;
+	vect shading(vect n, obj o);
+	void genPixelData(float imageHeight, float imageWidth);
   public:
     scene();
     int returnWidth();
@@ -48,9 +52,10 @@ class scene { //main class, used to render everything
 	vect4 getEye();
 	vect4 getLookAt();
 	vect4 getUp();
-    float** returnData();
+    float** returnData(int type);
     float returnAngle();
     void acquireData(std::string name);
 	void setup();
+	void draw();
 };
 #endif
