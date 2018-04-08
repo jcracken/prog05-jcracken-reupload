@@ -14,5 +14,6 @@ public:
 	void add(vect* other); //add two vectors
 	vect crossProduct(vect* other); //perform a cross product with another vector
 	bool comp(vect other); //compare to another vector; returns true if the values match, false otherwise
+	void set(float a, float b, float c);
 };
 #endif

@@ -61,7 +61,7 @@ bool triangle::intersect(vect v, float* z, float* w0, float* w1, float* w2) { //
 }
 
 float triangle::boundXMin() {
-	float min = INT_MAX;
+	float min = points.at(0)->getArr()[0];
 	for (unsigned int i = 0; i < points.size(); i++) {
 		if (points.at(i)->getArr()[0] < min) min = points.at(i)->getArr()[0];
 	}
@@ -69,7 +69,7 @@ float triangle::boundXMin() {
 }
 
 float triangle::boundYMin() {
-	float min = INT_MAX;
+	float min = points.at(0)->getArr()[1];
 	for (unsigned int i = 0; i < points.size(); i++) {
 		if (points.at(i)->getArr()[1] < min) min = points.at(i)->getArr()[1];
 	}
@@ -77,19 +77,19 @@ float triangle::boundYMin() {
 }
 
 float triangle::boundXMax() {
-	float min = INT_MIN;
+	float max = points.at(0)->getArr()[0];
 	for (unsigned int i = 0; i < points.size(); i++) {
-		if (points.at(i)->getArr()[0] > min) min = points.at(i)->getArr()[0];
+		if (points.at(i)->getArr()[0] > max) max = points.at(i)->getArr()[0];
 	}
-	return min;
+	return max;
 }
 
 float triangle::boundYMax() {
-	float min = INT_MIN;
+	float max = points.at(0)->getArr()[1];
 	for (unsigned int i = 0; i < points.size(); i++) {
-		if (points.at(i)->getArr()[1] > min) min = points.at(i)->getArr()[1];
+		if (points.at(i)->getArr()[1] > max) max = points.at(i)->getArr()[1];
 	}
-	return min;
+	return max;
 }
 
 vect triangle::getNorm() {

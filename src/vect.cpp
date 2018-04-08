@@ -47,3 +47,9 @@ bool vect::comp(vect other){ //if other matches this vector, return true; otherw
 	if(this->arr[0] == temp[0] && this->arr[1] == temp[1] && this->arr[2] == temp[2]) return true;
 	else return false;
 }
+
+void vect::set(float a, float b, float c) {
+	this->arr[0] = a;
+	this->arr[1] = b;
+	this->arr[2] = c;
+}

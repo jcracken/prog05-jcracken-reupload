@@ -19,21 +19,21 @@ float** scene::returnData(int type){ //converts data stored locally into a 2D fl
 			temp = (this->data[i][j]).getArr();
 			returnData[a][b] = temp[0];
 			returnData[a][b + 1] = temp[1];
-			returnData[a][b + 2] = temp[3];
+			returnData[a][b + 2] = temp[2];
 			a++;
 			b = b + 3;
 		} else if (type == 1) { //gourand
 			temp = (this->data[i][j]).getArr();
 			returnData[a][b] = temp[0];
 			returnData[a][b + 1] = temp[1];
-			returnData[a][b + 2] = temp[3];
+			returnData[a][b + 2] = temp[2];
 			a++;
 			b = b + 3;
 		} else { //phong
 			temp = (this->data[i][j]).getArr();
 			returnData[a][b] = temp[0];
 			returnData[a][b + 1] = temp[1];
-			returnData[a][b + 2] = temp[3];
+			returnData[a][b + 2] = temp[2];
 			a++;
 			b = b + 3;
 		}
@@ -142,6 +142,7 @@ void scene::acquireData(std::string name) {
 						line = 1;
 						iss >> objName;
 						oTemp.readData(objName);
+						oTemp.storeData();
 						objects.push_back(oTemp);
 						follow = true;
 					} else {
@@ -247,9 +248,9 @@ void scene::setup() {
 		for (unsigned int j = 0; j < t->size(); t++) {
 			vect4 t1 = vect4(t->at(j), 1.0);
 			M.mult(&t1, &mTemp);
-			t->at(j) = vect(mTemp.getVal(0, 0), mTemp.getVal(1, 0), mTemp.getVal(2, 0));
+			t->at(j).set(mTemp.getVal(0, 0), mTemp.getVal(1, 0), mTemp.getVal(2, 0));
 		}
-		this->objects.at(i).storeData();
+		objects.at(i).storeData();
 	}
 	this->genPixelData(imageHeight, imageWidth);
 	this->flat();
@@ -259,11 +260,14 @@ void scene::setup() {
 
 void scene::draw() {
 	float zTemp;
+	float w0, w1, w2;
 	for (unsigned int i = 0; i < this->objects.size(); i++) {
-		for (unsigned int j = 0; i < this->objects.at(i).getTriangles().size(); j++) {
-			for (unsigned int m = this->objects.at(i).getTriangles().at(j).boundXMin(); m < this->objects.at(i).getTriangles().at(j).boundXMax(); m++) {
-				for (unsigned int n = this->objects.at(i).getTriangles().at(j).boundYMin(); n < this->objects.at(i).getTriangles().at(j).boundYMax(); n++) {
-					if (this->objects.at(i).getTriangles().at(j).intersect(pixelLoc[m][n], &zTemp)) {
+		for (unsigned int j = 1; i < this->objects.at(i).getTriangles().size(); j++) {
+			for (unsigned int m = floor(this->objects.at(i).getTriangles().at(j).boundXMin()); m < ceil(this->objects.at(i).getTriangles().at(j).boundXMax()); m++) {
+				for (unsigned int n = floor(this->objects.at(i).getTriangles().at(j).boundYMin()); n < ceil(this->objects.at(i).getTriangles().at(j).boundYMax()); n++) {
+					std::cout << m << " " << n << std::endl;
+					std::cout << i << " " << j << std::endl;
+					if (this->objects.at(i).getTriangles().at(j).intersect(pixelLoc[m][n], &zTemp, &w0, &w1, &w2)) {
 						if (zTemp < z[m][n]) {
 							z[m][n] = zTemp;
 							data[m][n] = fColor[i][j].getColor();
@@ -287,32 +291,32 @@ vect scene::shading(vect n, obj o) { //blinn-phong
 
 void scene::genPixelData(float imageHeight, float imageWidth) {
 	data = new vect*[this->height];
-	for (unsigned int i = 0; i < this->height; i++) {
+	for (int i = 0; i < this->height; i++) {
 		data[i] = new vect[this->width];
 	}
 	gData = new vect*[this->height];
-	for (unsigned int i = 0; i < this->height; i++) {
+	for (int i = 0; i < this->height; i++) {
 		gData[i] = new vect[this->width];
 	}
 	pData = new vect*[this->height];
-	for (unsigned int i = 0; i < this->height; i++) {
+	for (int i = 0; i < this->height; i++) {
 		pData[i] = new vect[this->width];
 	}
 	pixelLoc = new vect*[this->height];
-	for (unsigned int i = 0; i < this->height; i++) {
+	for (int i = 0; i < this->height; i++) {
 		pixelLoc[i] = new vect[this->width];
 	}
-	for (unsigned int i = 0; i < this->height; i++) {
-		for (unsigned int j = 0; j < this->width; j++) {
+	for (int i = 0; i < this->height; i++) {
+		for (int j = 0; j < this->width; j++) {
 			pixelLoc[i][j] = vect(imageWidth / -2.0 + j, imageHeight / -2.0 + i, nearDepth);
 		}
 	}
 	z = new float*[this->height];
-	for (unsigned int i = 0; i < this->height; i++) {
+	for (int i = 0; i < this->height; i++) {
 		z[i] = new float[this->width];
 	}
-	for (unsigned int i = 0; i < this->height; i++) {
-		for (unsigned int j = 0; j < this->width; j++) {
+	for (int i = 0; i < this->height; i++) {
+		for (int j = 0; j < this->width; j++) {
 			z[i][j] = INT_MAX;
 		}
 	}

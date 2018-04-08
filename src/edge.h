@@ -1,6 +1,7 @@
 #ifndef EDGE_H
 #define EDGE_H
 
+class triangle;
 #include "vect.h"
 #include "triangle.h"
 #include <vector>
