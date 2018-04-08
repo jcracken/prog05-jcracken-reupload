@@ -252,15 +252,22 @@ void scene::setup() {
 		this->objects.at(i).storeData();
 	}
 	this->genPixelData(imageHeight, imageWidth);
+	this->flat();
+	this->gourand();
+	this->phong();
 }
 
 void scene::draw() {
+	float zTemp;
 	for (unsigned int i = 0; i < this->objects.size(); i++) {
 		for (unsigned int j = 0; i < this->objects.at(i).getTriangles().size(); j++) {
-			for (unsigned int m = 0; m < this->height; m++) {
-				for (unsigned int n = 0; n < this->width; n++) {
-					if (this->objects.at(i).getTriangles().at(j).intersect(data[m][n])) {
-						//do something
+			for (unsigned int m = this->objects.at(i).getTriangles().at(j).boundXMin(); m < this->objects.at(i).getTriangles().at(j).boundXMax(); m++) {
+				for (unsigned int n = this->objects.at(i).getTriangles().at(j).boundYMin(); n < this->objects.at(i).getTriangles().at(j).boundYMax(); n++) {
+					if (this->objects.at(i).getTriangles().at(j).intersect(pixelLoc[m][n], &zTemp)) {
+						if (zTemp < z[m][n]) {
+							z[m][n] = zTemp;
+
+						}
 					}
 				}
 			}
@@ -268,7 +275,7 @@ void scene::draw() {
 	}
 }
 
-vect scene::shading(vect n, obj o) {
+vect scene::shading(vect n, obj o) { //blinn-phong
 	float light = 0.0;
 	for (unsigned int i = 0; i < lights.size(); i++) {
 		light = 0;
@@ -281,6 +288,14 @@ void scene::genPixelData(float imageHeight, float imageWidth) {
 	for (unsigned int i = 0; i < this->height; i++) {
 		data[i] = new vect[this->width];
 	}
+	gData = new vect*[this->height];
+	for (unsigned int i = 0; i < this->height; i++) {
+		gData[i] = new vect[this->width];
+	}
+	pData = new vect*[this->height];
+	for (unsigned int i = 0; i < this->height; i++) {
+		pData[i] = new vect[this->width];
+	}
 	pixelLoc = new vect*[this->height];
 	for (unsigned int i = 0; i < this->height; i++) {
 		pixelLoc[i] = new vect[this->width];
@@ -290,4 +305,40 @@ void scene::genPixelData(float imageHeight, float imageWidth) {
 			pixelLoc[i][j] = vect(imageWidth / -2.0 + j, imageHeight / -2.0 + i, nearDepth);
 		}
 	}
+	z = new float*[this->height];
+	for (unsigned int i = 0; i < this->height; i++) {
+		z[i] = new float[this->width];
+	}
+	for (unsigned int i = 0; i < this->height; i++) {
+		for (unsigned int j = 0; j < this->width; j++) {
+			z[i][j] = INT_MAX;
+		}
+	}
+}
+
+void scene::gourand() {
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		gColor.push_back(std::vector<color>());
+		for (unsigned int j = 0; j < objects.at(i).getPoints()->size(); j++) {
+			color c = color();
+			vect v = vect(objects.at(i).getPointNorm(j).getArr()[0], objects.at(i).getPointNorm(j).getArr()[1], objects.at(i).getPointNorm(j).getArr()[2]);
+			c.setColor(shading(v, objects.at(i)));
+			gColor[i].push_back(c);
+		}
+	}
+}
+
+void scene::flat() {
+	for (unsigned int i = 0; i < objects.size(); i++) {
+		fColor.push_back(std::vector<color>());
+		for (unsigned int j = 0; j < objects.at(i).getTriangles().size(); j++) {
+			color c = color();
+			c.setColor(shading(objects.at(i).getTriangles().at(j).getNorm(), objects.at(i)));
+			fColor[i].push_back(c);
+		}
+	}
+}
+
+void scene::phong() {
+	//interpolate normals
 }

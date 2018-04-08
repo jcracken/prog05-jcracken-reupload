@@ -10,7 +10,7 @@ class triangle {
 private:
 	std::vector<vect*> points; //the three points that make up this triangle
 	std::vector<edge*> edges; //the three edges that make up this triangle
-	vect4 norm;
+	vect norm;
 public:
 	triangle(); //constructor
 	vect thirdPoint(vect head, vect tail); //finds the third point that aren't the two passed in
@@ -19,6 +19,11 @@ public:
 	vect getPoint(int num);
 	edge* getEdge(int num);
 	void populateNorm(vect n);
-	bool intersect(vect v);
+	bool intersect(vect v, float* z);
+	float boundXMin();
+	float boundYMin();
+	float boundXMax();
+	float boundYMax();
+	vect getNorm();
 };
 #endif

@@ -38,13 +38,22 @@ class scene { //main class, used to render everything
 	float b;
     float angle;
 	float nearDepth;
-	vect** data;
-	vect** pixelLoc;
 	float farDepth;
+	float** z;
+	vect** data;
+	vect** gData;
+	vect** pData;
+	vect** pixelLoc;
 	std::vector<light> lights;
 	std::vector<obj> objects;
+	std::vector<std::vector<color>> gColor;
+	std::vector<std::vector<color>> fColor;
+	std::vector<std::vector<vect>> pNorms;
 	vect shading(vect n, obj o);
 	void genPixelData(float imageHeight, float imageWidth);
+	void gourand();
+	void flat();
+	void phong();
   public:
     scene();
     int returnWidth();

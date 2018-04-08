@@ -29,9 +29,45 @@ edge * triangle::getEdge(int num) { //easier than passing back a vector
 }
 
 void triangle::populateNorm(vect n) {
-	this->norm = vect4(n, 0.0);
+	this->norm = n;
 }
 
-bool triangle::intersect(vect v) { //todo
+bool triangle::intersect(vect v, float* z) { //todo
 	return false;
+}
+
+float triangle::boundXMin() {
+	float min = INT_MAX;
+	for (unsigned int i = 0; i < points.size(); i++) {
+		if (points.at(i)->getArr()[0] < min) min = points.at(i)->getArr()[0];
+	}
+	return min;
+}
+
+float triangle::boundYMin() {
+	float min = INT_MAX;
+	for (unsigned int i = 0; i < points.size(); i++) {
+		if (points.at(i)->getArr()[1] < min) min = points.at(i)->getArr()[1];
+	}
+	return min;
+}
+
+float triangle::boundXMax() {
+	float min = INT_MIN;
+	for (unsigned int i = 0; i < points.size(); i++) {
+		if (points.at(i)->getArr()[0] > min) min = points.at(i)->getArr()[0];
+	}
+	return min;
+}
+
+float triangle::boundYMax() {
+	float min = INT_MIN;
+	for (unsigned int i = 0; i < points.size(); i++) {
+		if (points.at(i)->getArr()[1] > min) min = points.at(i)->getArr()[1];
+	}
+	return min;
+}
+
+vect triangle::getNorm() {
+	return norm;
 }

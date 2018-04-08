@@ -40,5 +40,6 @@ public:
 	void pointPopulate();
 	std::vector<vect>* getPoints();
 	std::vector<triangle> getTriangles();
+	vect4 getPointNorm(int loc);
 };
 #endif
