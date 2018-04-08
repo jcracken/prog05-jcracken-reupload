@@ -180,18 +180,21 @@ void scene::setup() {
 	vect temp;
 	matrix mTemp, mT2;
 	unsigned int i;
-	w[0] = -1.0 * this->lookat.getArr()[0] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
-	w[1] = -1.0 * this->lookat.getArr()[1] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
-	w[2] = -1.0 * this->lookat.getArr()[2] / sqrt(powf(this->lookat.getArr()[0], 2) + powf(this->lookat.getArr()[1], 2) + powf(this->lookat.getArr()[2], 2));
+
+	for (i = 0; i < (unsigned)3; i++) {
+		w[i] = (this->eye.getArr()[i] - this->lookat.getArr()[i]) / sqrt(powf(this->eye.getArr()[1] - this->lookat.getArr()[0], 2) + powf(this->eye.getArr()[2] - this->lookat.getArr()[1], 2) + powf(this->eye.getArr()[2] - this->lookat.getArr()[2], 2));
+	}
 	this->w = vect4(w[0], w[1], w[2], 0.0);
 
 	temp = this->up.crossProduct(&this->w);
 
 	u = temp.getArr();
 
-	u[0] = u[0] / sqrt(powf(u[0], 2) + powf(u[1], 2) + powf(u[2], 2));
-	u[1] = u[1] / sqrt(powf(u[0], 2) + powf(u[1], 2) + powf(u[2], 2));
-	u[2] = u[2] / sqrt(powf(u[0], 2) + powf(u[1], 2) + powf(u[2], 2));
+	for (i = 0; i < (unsigned)3; i++) {
+		if (u[i] == 0.0) u[i] = 0.0;
+		else u[i] = u[i] / sqrt(powf(u[0], 2) + powf(u[1], 2) + powf(u[2], 2));
+	}
+
 	this->u = vect4(u[0], u[1], u[2], 0.0);
 
 	temp = this->w.crossProduct(&vect4(u[0], u[1], u[2], 1.0));
@@ -205,6 +208,17 @@ void scene::setup() {
 	this->l = imageWidth / -2.0;
 	this->t = imageHeight / 2.0;
 	this->b = imageHeight / -2.0;
+
+	for (i = 0; i < (unsigned)4; i++) {
+		for (int j = 0; j < 4; j++) {
+			mTemp.setVal(i, j, 0.0);
+			mT2.setVal(i, j, 0.0);
+			M_per.setVal(i, j, 0.0);
+			M_cam.setVal(i, j, 0.0);
+			M_vp.setVal(i, j, 0.0);
+			M.setVal(i, j, 0.0);
+		}
+	}
 
 	//M_per
 	M_per.setVal(0, 0, ((2 * this->nearDepth) / (r - l)));
@@ -248,7 +262,7 @@ void scene::setup() {
 		for (unsigned int j = 0; j < t->size(); t++) {
 			vect4 t1 = vect4(t->at(j), 1.0);
 			M.mult(&t1, &mTemp);
-			t->at(j).set(mTemp.getVal(0, 0), mTemp.getVal(1, 0), mTemp.getVal(2, 0));
+			t->at(j) = vect(mTemp.getVal(0, 0), mTemp.getVal(1, 0), mTemp.getVal(2, 0));
 		}
 		objects.at(i).storeData();
 	}
@@ -262,7 +276,7 @@ void scene::draw() {
 	float zTemp;
 	float w0, w1, w2;
 	for (unsigned int i = 0; i < this->objects.size(); i++) {
-		for (unsigned int j = 1; i < this->objects.at(i).getTriangles().size(); j++) {
+		for (unsigned int j = 0; i < this->objects.at(i).getTriangles().size(); j++) {
 			for (unsigned int m = floor(this->objects.at(i).getTriangles().at(j).boundXMin()); m < ceil(this->objects.at(i).getTriangles().at(j).boundXMax()); m++) {
 				for (unsigned int n = floor(this->objects.at(i).getTriangles().at(j).boundYMin()); n < ceil(this->objects.at(i).getTriangles().at(j).boundYMax()); n++) {
 					std::cout << m << " " << n << std::endl;

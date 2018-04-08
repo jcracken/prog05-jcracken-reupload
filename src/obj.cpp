@@ -86,7 +86,7 @@ void obj::storeData(){ //stores acquired data in new data structure
 	}
 
 	for (i = 0; i < this->faces.size(); i++) {
-
+		std::cout << i << std::endl;
 		/*this chunk of code basically goes through the points connected to the current face and checks to see if the
 		  connections estabilished by this face already exist in pointConns; if not, then it stores it in this format:
 		  EX: face with points 1, 2, 3. pointConns will then put values 2 and 3 in the first location, 1 and 3 in
@@ -189,6 +189,7 @@ void obj::storeData(){ //stores acquired data in new data structure
 	//delete the dummy data from the connections 2D vector
 	for (i = 0; i < pointConns.size(); i++) {
 		pointConns.at(i).erase(pointConns.at(i).begin());
+		std::cout << i << std::endl;
 	}
 }
 
