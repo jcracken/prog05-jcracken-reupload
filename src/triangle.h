@@ -2,6 +2,7 @@
 #define TRIANGLE_H
 
 class edge; //forward declaration, think of this as an edge.h include
+#include "edge.h"
 #include "vect.h"
 #include "vect4.h"
 #include <vector>
@@ -11,6 +12,7 @@ private:
 	std::vector<vect*> points; //the three points that make up this triangle
 	std::vector<edge*> edges; //the three edges that make up this triangle
 	vect norm;
+	float edgeFunction(vect a, vect b, vect c);
 public:
 	triangle(); //constructor
 	vect thirdPoint(vect head, vect tail); //finds the third point that aren't the two passed in
@@ -19,7 +21,7 @@ public:
 	vect getPoint(int num);
 	edge* getEdge(int num);
 	void populateNorm(vect n);
-	bool intersect(vect v, float* z);
+	bool intersect(vect v, float* z, float* w0, float* w1, float* w2);
 	float boundXMin();
 	float boundYMin();
 	float boundXMax();

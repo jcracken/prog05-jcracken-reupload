@@ -58,6 +58,7 @@ int main(int argc, char** argv){
 	//load in data and store it
 	sc->acquireData(argv[1]);
 	sc->setup();
+	sc->draw();
 	image->setData(sc->returnData(type), sc->returnHeight(), 3 * sc->returnWidth());
 
 	//Start up SDL and make sure it went ok

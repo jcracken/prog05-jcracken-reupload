@@ -38,6 +38,10 @@ public:
 	void setSpecular(vect spec);
 	void setPhong(float phong);
 	void pointPopulate();
+	color getAmbient();
+	color getDiffuse();
+	color getSpecular();
+	float getPhong();
 	std::vector<vect>* getPoints();
 	std::vector<triangle> getTriangles();
 	vect4 getPointNorm(int loc);

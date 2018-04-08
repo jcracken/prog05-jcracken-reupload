@@ -253,8 +253,8 @@ void scene::setup() {
 	}
 	this->genPixelData(imageHeight, imageWidth);
 	this->flat();
-	this->gourand();
-	this->phong();
+	//this->gourand();
+	//this->phong();
 }
 
 void scene::draw() {
@@ -266,7 +266,7 @@ void scene::draw() {
 					if (this->objects.at(i).getTriangles().at(j).intersect(pixelLoc[m][n], &zTemp)) {
 						if (zTemp < z[m][n]) {
 							z[m][n] = zTemp;
-
+							data[m][n] = fColor[i][j].getColor();
 						}
 					}
 				}
@@ -276,11 +276,13 @@ void scene::draw() {
 }
 
 vect scene::shading(vect n, obj o) { //blinn-phong
-	float light = 0.0;
+	float light[3] = { 0.0 };
 	for (unsigned int i = 0; i < lights.size(); i++) {
-		light = 0;
+		light[0] = light[0] + o.getDiffuse().getColor().getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
+		light[1] = light[1] + o.getDiffuse().getColor().getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
+		light[2] = light[2] + o.getDiffuse().getColor().getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
 	}
-	return vect();
+	return vect(light[0], light[1], light[2]);
 }
 
 void scene::genPixelData(float imageHeight, float imageWidth) {

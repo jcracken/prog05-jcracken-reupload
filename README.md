@@ -14,3 +14,10 @@ Scenes included are:
 * 2spheres{1,2,3}.txt are three scenes rendering both spheres.  The second sphere is rendered blue.  These scenes test that z-buffering is working correctly by positioning the eye in different locations
 * ballring.txt is a scene that includes more complex lighting and has both the sphere and torus
 * kitten.txt is a scene to test the larger triangle mesh with more complex lighting.
+
+
+Refs
+
+https://www.scratchapixel.com/lessons/3d-basic-rendering/ray-tracing-rendering-a-triangle/barycentric-coordinates 
+https://www.scratchapixel.com/lessons/3d-basic-rendering/rasterization-practical-implementation/rasterization-stage
+for barycentric stuff

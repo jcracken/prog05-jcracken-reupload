@@ -1,5 +1,9 @@
 #include "triangle.h"
 
+float triangle::edgeFunction(vect a, vect b, vect c) {
+	return (c.getArr()[0] - a.getArr()[0]) * (b.getArr()[1] - a.getArr()[1]) - (c.getArr()[1] - a.getArr()[1]) * (b.getArr()[0] - a.getArr()[0]);
+}
+
 triangle::triangle(){
 	//constructor
 }
@@ -32,8 +36,28 @@ void triangle::populateNorm(vect n) {
 	this->norm = n;
 }
 
-bool triangle::intersect(vect v, float* z) { //todo
-	return false;
+bool triangle::intersect(vect v, float* z, float* w0, float* w1, float* w2) { //todo
+	bool ret = true;
+	float zTemp = INT_MAX;
+
+	*w0 = edgeFunction(*this->points.at(0), *this->points.at(1), v);
+	*w1 = edgeFunction(*this->points.at(1), *this->points.at(2), v);
+	*w2 = edgeFunction(*this->points.at(2), *this->points.at(0), v);
+	ret &= (w0 >= 0);
+	ret &= (w1 >= 0);
+	ret &= (w2 >= 0);
+
+	if (ret) {
+		float area = edgeFunction(*this->points.at(0), *this->points.at(1), *this->points.at(2));
+		*w0 /= area;
+		*w1 /= area;
+		*w2 /= area;
+	}
+	for (unsigned int i = 0; i < this->points.size(); i++) {
+		if (this->points.at(i)->getArr()[2] < zTemp) *z = this->points.at(i)->getArr()[2];
+	}
+
+	return ret;
 }
 
 float triangle::boundXMin() {

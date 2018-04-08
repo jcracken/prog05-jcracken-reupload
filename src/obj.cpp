@@ -354,6 +354,22 @@ void obj::pointPopulate() {
 	}
 }
 
+color obj::getAmbient() {
+	return ambient;
+}
+
+color obj::getDiffuse() {
+	return diffuse;
+}
+
+color obj::getSpecular() {
+	return specular;
+}
+
+float obj::getPhong() {
+	return phong;
+}
+
 std::vector<vect>* obj::getPoints() {
 	return &this->points;
 }
