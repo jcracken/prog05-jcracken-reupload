@@ -17,25 +17,19 @@ float** scene::returnData(int type){ //converts data stored locally into a 2D fl
     for(j = 0; j < this->width; j++){
 		if (type == 0) { //flat
 			temp = (this->data[i][j]).getArr();
-			returnData[a][b] = temp[0];
-			returnData[a][b + 1] = temp[1];
-			returnData[a][b + 2] = temp[2];
-			a++;
-			b = b + 3;
+			returnData[i][3 * j] = temp[0];
+			returnData[i][3 * j + 1] = temp[1];
+			returnData[i][3 * j + 2] = temp[2];
 		} else if (type == 1) { //gourand
 			temp = (this->data[i][j]).getArr();
-			returnData[a][b] = temp[0];
-			returnData[a][b + 1] = temp[1];
-			returnData[a][b + 2] = temp[2];
-			a++;
-			b = b + 3;
+			returnData[i][3 * j] = temp[0];
+			returnData[i][3 * j + 1] = temp[1];
+			returnData[i][3 * j + 2] = temp[2];
 		} else { //phong
 			temp = (this->data[i][j]).getArr();
-			returnData[a][b] = temp[0];
-			returnData[a][b + 1] = temp[1];
-			returnData[a][b + 2] = temp[2];
-			a++;
-			b = b + 3;
+			returnData[i][3 * j] = temp[0];
+			returnData[i][3 * j + 1] = temp[1];
+			returnData[i][3 * j + 2] = temp[2];
 		}
     }
   }
@@ -201,8 +195,8 @@ void scene::setup() {
 	this->v = vect4(temp, 0.0);
 
 	float dist = powf((powf(this->eye.getArr()[0] - this->lookat.getArr()[0], 2)) + (powf(this->eye.getArr()[1] - this->lookat.getArr()[1], 2)) + (powf(this->eye.getArr()[2] - this->lookat.getArr()[2], 2)), 0.5);
-	float imageHeight = std::tan(this->angle / 2.0) * dist; //calculate image height
-	float imageWidth = std::tan((this->angle * this->width / this->height) / 2.0) * dist; //calculate image width
+	float imageHeight = std::tan(this->angle * (180.0 / 3.141592653589793238463) / 2.0) * dist; //calculate image height
+	float imageWidth = std::tan((this->angle * (180.0 / 3.141592653589793238463) * this->width / this->height) / 2.0) * dist; //calculate image width
 
 	this->r = imageWidth / 2.0;
 	this->l = imageWidth / -2.0;
@@ -259,12 +253,13 @@ void scene::setup() {
 	
 	for (i = 0; i < this->objects.size(); i++) {
 		std::vector<vect>* t = this->objects.at(i).getPoints();
-		for (unsigned int j = 0; j < t->size(); t++) {
+		for (unsigned int j = 0; j < t->size(); j++) {
 			vect4 t1 = vect4(t->at(j), 1.0);
 			M.mult(&t1, &mTemp);
 			t->at(j) = vect(mTemp.getVal(0, 0), mTemp.getVal(1, 0), mTemp.getVal(2, 0));
 		}
 		objects.at(i).storeData();
+		objects.at(i).pointPopulate();
 	}
 	this->genPixelData(imageHeight, imageWidth);
 	this->flat();
@@ -275,13 +270,13 @@ void scene::setup() {
 void scene::draw() {
 	float zTemp;
 	float w0, w1, w2;
+	std::vector<triangle> t;
 	for (unsigned int i = 0; i < this->objects.size(); i++) {
-		for (unsigned int j = 0; i < this->objects.at(i).getTriangles().size(); j++) {
-			for (unsigned int m = floor(this->objects.at(i).getTriangles().at(j).boundXMin()); m < ceil(this->objects.at(i).getTriangles().at(j).boundXMax()); m++) {
-				for (unsigned int n = floor(this->objects.at(i).getTriangles().at(j).boundYMin()); n < ceil(this->objects.at(i).getTriangles().at(j).boundYMax()); n++) {
-					std::cout << m << " " << n << std::endl;
-					std::cout << i << " " << j << std::endl;
-					if (this->objects.at(i).getTriangles().at(j).intersect(pixelLoc[m][n], &zTemp, &w0, &w1, &w2)) {
+		t = this->objects.at(i).getTriangles();
+		for (unsigned int j = 0; j < t.size(); j++) {
+			for (unsigned int m = floor(t.at(j).boundXMin()); m < ceil(t.at(j).boundXMax()); m++) {
+				for (unsigned int n = floor(t.at(j).boundYMin()); n < ceil(t.at(j).boundYMax()); n++) {
+					if (t.at(j).intersect(pixelLoc[m][n], &zTemp, &w0, &w1, &w2)) {
 						if (zTemp < z[m][n]) {
 							z[m][n] = zTemp;
 							data[m][n] = fColor[i][j].getColor();

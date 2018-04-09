@@ -60,6 +60,8 @@ int main(int argc, char** argv){
 	sc->setup();
 	sc->draw();
 	image->setData(sc->returnData(type), sc->returnHeight(), 3 * sc->returnWidth());
+	image->setHeight(sc->returnHeight());
+	image->setWidth(sc->returnWidth());
 
 	//Start up SDL and make sure it went ok
 	if (SDL_Init(SDL_INIT_VIDEO) != 0){

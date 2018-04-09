@@ -86,6 +86,7 @@ void ppm::setData(unsigned char* data){
 void ppm::setData(float** data, int height, int width){ //if float array is passed in, convert to unsigned char first
   int i, j, k = 0;
   float min = -5000.0;
+  this->data = new unsigned char[width*height];
   unsigned char** tempData = new unsigned char*[height];
   for (i = 0; i < height; i++) {
 	  tempData[i] = new unsigned char[width];
