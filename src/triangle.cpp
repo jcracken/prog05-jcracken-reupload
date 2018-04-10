@@ -53,9 +53,7 @@ bool triangle::intersect(vect v, float* z, float* w0, float* w1, float* w2) { //
 		*w1 /= area;
 		*w2 /= area;
 	}
-	for (unsigned int i = 0; i < this->points.size(); i++) {
-		if (this->points.at(i)->getArr()[2] < zTemp) *z = this->points.at(i)->getArr()[2];
-	}
+	*z = *w0 * (this->points.at(0)->getArr()[2]) + *w1 * (this->points.at(1)->getArr()[1]) + *w2 * (this->points.at(2)->getArr()[2]);
 
 	return ret;
 }
