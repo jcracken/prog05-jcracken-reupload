@@ -19,12 +19,13 @@ float matrix::getVal(int x, int y){
 void matrix::mult(matrix * other, matrix * ret){
 	int i, j, k = 0;
 	for (i = 0; i < 4; i++) {
-		float temp = 0.0;
 		for (j = 0; j < 4; j++) {
-			temp = temp + this->mat[i][j] * other->getVal(j, i);
+			float temp = 0.0;
+			for (k = 0; k < 4; k++) {
+				temp = temp + this->mat[i][k] * other->getVal(k, j);
+			}
+			ret->setVal(i, j, temp);
 		}
-		ret->setVal(i, k, temp);
-		k++;
 	}
 }
 

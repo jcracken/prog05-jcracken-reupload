@@ -221,6 +221,7 @@ void scene::setup() {
 	M_per.setVal(1, 2, ((b + t) / (b - t)));
 	M_per.setVal(2, 2, ((this->farDepth + this->nearDepth) / (this->nearDepth - this->farDepth)));
 	M_per.setVal(2, 3, ((2.0 * this->nearDepth * this->farDepth) / (this->farDepth - this->nearDepth)));
+	M_per.setVal(3, 2, 1.0);
 
 	//M_cam
 	for (i = 0; i < 3; i++) {
@@ -270,16 +271,31 @@ void scene::setup() {
 void scene::draw() {
 	float zTemp;
 	float w0, w1, w2;
+	int boundXmax, boundXmin, boundYmax, boundYmin;
 	std::vector<triangle> t;
 	for (unsigned int i = 0; i < this->objects.size(); i++) {
 		t = this->objects.at(i).getTriangles();
 		for (unsigned int j = 0; j < t.size(); j++) {
-			for (unsigned int m = floor(t.at(j).boundXMin()); m < ceil(t.at(j).boundXMax()); m++) {
-				for (unsigned int n = floor(t.at(j).boundYMin()); n < ceil(t.at(j).boundYMax()); n++) {
-					if (t.at(j).intersect(pixelLoc[m][n], &zTemp, &w0, &w1, &w2)) {
-						if (zTemp < z[m][n]) {
-							z[m][n] = zTemp;
-							data[m][n] = fColor[i][j].getColor();
+			boundXmax = ceil(t.at(j).boundXMax());
+			if (boundXmax > this->height) boundXmax = height;
+			if (boundXmax < 0) continue;
+			boundXmin = floor(t.at(j).boundXMin());
+			if (boundXmin < 0) boundXmin = 0;
+			if (boundXmin > 800) continue;
+			for (unsigned int m = boundXmin; m < boundXmax; m++) {
+				boundYmax = ceil(t.at(j).boundYMax());
+				if (boundYmax > this->height) boundYmax = height;
+				if (boundYmax < 0) continue;
+				boundYmin = floor(t.at(j).boundYMin());
+				if (boundYmin < 0) boundYmin = 0;
+				if (boundYmin > 800) continue;
+				for (unsigned int n = boundYmin; n < boundYmax; n++) {
+					if (m < height && n < width) {
+						if (t.at(j).intersect(pixelLoc[m][n], &zTemp, &w0, &w1, &w2)) {
+							if (zTemp < z[m][n]) {
+								z[m][n] = zTemp;
+								data[m][n] = fColor[i][j].getColor();
+							}
 						}
 					}
 				}
