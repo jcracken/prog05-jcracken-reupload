@@ -176,7 +176,7 @@ void scene::setup() {
 	unsigned int i;
 
 	for (i = 0; i < (unsigned)3; i++) {
-		w[i] = (this->eye.getArr()[i] - this->lookat.getArr()[i]) / sqrt(powf(this->eye.getArr()[1] - this->lookat.getArr()[0], 2) + powf(this->eye.getArr()[2] - this->lookat.getArr()[1], 2) + powf(this->eye.getArr()[2] - this->lookat.getArr()[2], 2));
+		w[i] = (this->eye.getArr()[i] - this->lookat.getArr()[i]) / sqrt(powf(this->eye.getArr()[0] - this->lookat.getArr()[0], 2.0) + powf(this->eye.getArr()[1] - this->lookat.getArr()[1], 2.0) + powf(this->eye.getArr()[2] - this->lookat.getArr()[2], 2));
 	}
 	this->w = vect4(w[0], w[1], w[2], 0.0);
 
@@ -194,9 +194,9 @@ void scene::setup() {
 	temp = this->w.crossProduct(&vect4(u[0], u[1], u[2], 1.0));
 	this->v = vect4(temp, 0.0);
 
-	float dist = powf((powf(this->eye.getArr()[0] - this->lookat.getArr()[0], 2)) + (powf(this->eye.getArr()[1] - this->lookat.getArr()[1], 2)) + (powf(this->eye.getArr()[2] - this->lookat.getArr()[2], 2)), 0.5);
-	float imageHeight = std::tan(this->angle * (180.0 / 3.141592653589793238463) / 2.0) * dist; //calculate image height
-	float imageWidth = std::tan((this->angle * (180.0 / 3.141592653589793238463) * this->width / this->height) / 2.0) * dist; //calculate image width
+	float dist = powf((powf(this->eye.getArr()[0] - this->lookat.getArr()[0], 2.0)) + (powf(this->eye.getArr()[1] - this->lookat.getArr()[1], 2.0)) + (powf(this->eye.getArr()[2] - this->lookat.getArr()[2], 2.0)), 0.5);
+	float imageHeight = std::tan(this->angle * (3.141592653589793238463 / 180.0) / 2.0) * std::abs(this->nearDepth) * 2.0; //calculate image height
+	float imageWidth = std::tan((this->angle * (3.141592653589793238463 / 180.0) * (this->width / this->height)) / 2.0) * std::abs(this->nearDepth) * 2.0; //calculate image width
 
 	this->r = imageWidth / 2.0;
 	this->l = imageWidth / -2.0;
@@ -215,12 +215,12 @@ void scene::setup() {
 	}
 
 	//M_per
-	M_per.setVal(0, 0, ((2 * this->nearDepth) / (r - l)));
+	M_per.setVal(0, 0, ((2.0 * this->nearDepth) / (r - l)));
 	M_per.setVal(0, 2, ((l + r) / (l - r)));
-	M_per.setVal(1, 1, ((2 * this->nearDepth) / (t - b)));
+	M_per.setVal(1, 1, ((2.0 * this->nearDepth) / (t - b)));
 	M_per.setVal(1, 2, ((b + t) / (b - t)));
 	M_per.setVal(2, 2, ((this->farDepth + this->nearDepth) / (this->nearDepth - this->farDepth)));
-	M_per.setVal(2, 3, ((2 * this->nearDepth * this->farDepth) / (this->farDepth - this->nearDepth)));
+	M_per.setVal(2, 3, ((2.0 * this->nearDepth * this->farDepth) / (this->farDepth - this->nearDepth)));
 
 	//M_cam
 	for (i = 0; i < 3; i++) {
