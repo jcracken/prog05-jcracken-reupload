@@ -251,21 +251,26 @@ void scene::setup() {
 
 	M_vp.mult(&M_per, &mTemp);
 	mTemp.mult(&M_cam, &M);
+
+	this->genPixelData(imageHeight, imageWidth);
+	for (i = 0; i < objects.size(); i++) {
+		objects.at(i).storeData();
+		objects.at(i).pointPopulate();
+	}
+
+	this->flat();
+	//this->gourand();
+	//this->phong();
 	
 	for (i = 0; i < this->objects.size(); i++) {
 		std::vector<vect>* t = this->objects.at(i).getPoints();
 		for (unsigned int j = 0; j < t->size(); j++) {
 			vect4 t1 = vect4(t->at(j), 1.0);
 			M.mult(&t1, &mTemp);
-			t->at(j) = vect(mTemp.getVal(0, 0), mTemp.getVal(1, 0), mTemp.getVal(2, 0));
+			t->at(j) = vect(mTemp.getVal(0, 0) / mTemp.getVal(3, 0), mTemp.getVal(1, 0) / mTemp.getVal(3, 0), mTemp.getVal(2, 0) / mTemp.getVal(3, 0));
 		}
 		objects.at(i).storeData();
-		objects.at(i).pointPopulate();
 	}
-	this->genPixelData(imageHeight, imageWidth);
-	this->flat();
-	//this->gourand();
-	//this->phong();
 }
 
 void scene::draw() {
@@ -277,18 +282,18 @@ void scene::draw() {
 		t = this->objects.at(i).getTriangles();
 		for (unsigned int j = 0; j < t.size(); j++) {
 			boundXmax = ceil(t.at(j).boundXMax());
-			if (boundXmax > this->height) boundXmax = height;
-			if (boundXmax < 0) continue;
+			/*if (boundXmax > this->width / 2.0) boundXmax = height;
+			if (boundXmax < this->width / -2.0) continue;*/
 			boundXmin = floor(t.at(j).boundXMin());
-			if (boundXmin < 0) boundXmin = 0;
-			if (boundXmin > 800) continue;
+			/*if (boundXmin < this->width / -2.0) boundXmin = 0;
+			if (boundXmin > this->width / 2.0) continue;*/
 			for (unsigned int m = boundXmin; m < boundXmax; m++) {
 				boundYmax = ceil(t.at(j).boundYMax());
-				if (boundYmax > this->height) boundYmax = height;
-				if (boundYmax < 0) continue;
+				/*if (boundYmax > this->height / 2.0) boundYmax = height;
+				if (boundYmax < this->height / -2.0) continue;*/
 				boundYmin = floor(t.at(j).boundYMin());
-				if (boundYmin < 0) boundYmin = 0;
-				if (boundYmin > 800) continue;
+				/*if (boundYmin < this->height / -2.0) boundYmin = 0;
+				if (boundYmin > this->height / 2.0) continue;*/
 				for (unsigned int n = boundYmin; n < boundYmax; n++) {
 					if (m < height && n < width) {
 						if (t.at(j).intersect(pixelLoc[m][n], &zTemp, &w0, &w1, &w2)) {
@@ -307,9 +312,9 @@ void scene::draw() {
 vect scene::shading(vect n, obj o) { //blinn-phong
 	float light[3] = { 0.0 };
 	for (unsigned int i = 0; i < lights.size(); i++) {
-		light[0] = light[0] + o.getDiffuse().getColor().getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
-		light[1] = light[1] + o.getDiffuse().getColor().getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
-		light[2] = light[2] + o.getDiffuse().getColor().getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
+		light[0] = light[0] + o.getAmbient().getColor().getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] + o.getDiffuse().getColor().getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
+		light[1] = light[1] + o.getAmbient().getColor().getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] + o.getDiffuse().getColor().getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
+		light[2] = light[2] + o.getAmbient().getColor().getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] + o.getDiffuse().getColor().getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
 	}
 	return vect(light[0], light[1], light[2]);
 }
@@ -362,9 +367,10 @@ void scene::gourand() {
 void scene::flat() {
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		fColor.push_back(std::vector<color>());
-		for (unsigned int j = 0; j < objects.at(i).getTriangles().size(); j++) {
+		std::vector<triangle> t = objects.at(i).getTriangles();
+		for (unsigned int j = 0; j < t.size(); j++) {
 			color c = color();
-			c.setColor(shading(objects.at(i).getTriangles().at(j).getNorm(), objects.at(i)));
+			c.setColor(shading(t.at(j).getNorm(), objects.at(i)));
 			fColor[i].push_back(c);
 		}
 	}
