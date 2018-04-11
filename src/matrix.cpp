@@ -30,12 +30,11 @@ void matrix::mult(matrix * other, matrix * ret){
 }
 
 void matrix::mult(vect4 * other, matrix * ret){
-	int i, j;
-	float temp;
+	int i, j, k = 0;
 	for (i = 0; i < 4; i++) {
-		temp = 0;
-		for (j = 0; j < 4; j++) {
-			temp = temp + this->mat[i][j] * other->getArr()[i];
+		float temp = 0.0;
+		for (k = 0; k < 4; k++) {
+			temp = temp + this->mat[i][k] * other->getArr()[k];
 		}
 		ret->setVal(i, 0, temp);
 	}
