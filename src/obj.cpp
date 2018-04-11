@@ -342,9 +342,11 @@ void obj::pointPopulate() {
 	for (i = 0; i < points.size(); i++) {
 		for (j = 0; j < triangles.size(); j++) {
 			if (triangles.at(j).getPoint(0).comp(points.at(i)) || triangles.at(j).getPoint(1).comp(points.at(i)) || triangles.at(j).getPoint(2).comp(points.at(i))) {
-				vect t = triangles.at(j).getEdge(0)->getVecRep().crossProduct(&triangles.at(j).getEdge(1)->getVecRep());
-				triangles.at(j).populateNorm(t);
-				temp.add(&t);
+				vect t = vect(triangles.at(j).getPoint(0).getArr()[0] - triangles.at(j).getPoint(1).getArr()[0], triangles.at(j).getPoint(0).getArr()[1] - triangles.at(j).getPoint(1).getArr()[1], triangles.at(j).getPoint(0).getArr()[2] - triangles.at(j).getPoint(1).getArr()[2]);
+				vect t1 = vect(triangles.at(j).getPoint(1).getArr()[0] - triangles.at(j).getPoint(2).getArr()[0], triangles.at(j).getPoint(1).getArr()[1] - triangles.at(j).getPoint(2).getArr()[1], triangles.at(j).getPoint(1).getArr()[2] - triangles.at(j).getPoint(2).getArr()[2]);
+				vect t2 = t.crossProduct(&t1);
+				triangles.at(j).populateNorm(t2);
+				temp.add(&t2);
 				k++;
 			}
 		}
