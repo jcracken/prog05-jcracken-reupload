@@ -49,11 +49,12 @@ class scene { //main class, used to render everything
 	std::vector<std::vector<color>> gColor;
 	std::vector<std::vector<color>> fColor;
 	std::vector<std::vector<vect>> pNorms;
-	vect shading(vect n, obj o);
+	vect shading(vect n, obj o, vect v);
 	void genPixelData(float imageHeight, float imageWidth);
 	void gourand();
 	void flat();
 	void phong();
+	vect half(vect m, vect n);
   public:
     scene();
     int returnWidth();

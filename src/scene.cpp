@@ -21,7 +21,7 @@ float** scene::returnData(int type){ //converts data stored locally into a 2D fl
 			returnData[i][3 * j + 1] = temp[1];
 			returnData[i][3 * j + 2] = temp[2];
 		} else if (type == 1) { //gourand
-			temp = (this->data[i][j]).getArr();
+			temp = (this->gData[i][j]).getArr();
 			returnData[i][3 * j] = temp[0];
 			returnData[i][3 * j + 1] = temp[1];
 			returnData[i][3 * j + 2] = temp[2];
@@ -259,7 +259,7 @@ void scene::setup() {
 	}
 
 	this->flat();
-	//this->gourand();
+	this->gourand();
 	//this->phong();
 	
 	for (i = 0; i < this->objects.size(); i++) {
@@ -278,8 +278,12 @@ void scene::draw() {
 	float w0, w1, w2;
 	int boundXmax, boundXmin, boundYmax, boundYmin;
 	std::vector<triangle> t;
+	std::vector<vect>* p;
+	vect a, b, c;
+	float temp[3];
 	for (unsigned int i = 0; i < this->objects.size(); i++) {
 		t = this->objects.at(i).getTriangles();
+		p = this->objects.at(i).getPoints();
 		for (unsigned int j = 0; j < t.size(); j++) {
 			boundXmax = ceil(t.at(j).boundXMax());
 			/*if (boundXmax > this->width / 2.0) boundXmax = height;
@@ -300,6 +304,33 @@ void scene::draw() {
 							if (zTemp < z[m][n]) {
 								z[m][n] = zTemp;
 								data[m][n] = fColor[i][j].getColor();
+								
+								a = t.at(j).getPoint(0);
+								b = t.at(j).getPoint(1);
+								c = t.at(j).getPoint(2);
+
+								temp[0] = 0.0;
+								temp[1] = 0.0;
+								temp[2] = 0.0;
+
+								for (unsigned int x = 0; x < p->size(); x++) {
+									if (p->at(x).comp(a)) {
+										temp[0] = temp[0] + gColor[i][x].getColor().getArr()[0] * w0;
+										temp[1] = temp[1] + gColor[i][x].getColor().getArr()[1] * w0;
+										temp[2] = temp[2] + gColor[i][x].getColor().getArr()[2] * w0;
+									}
+									if (p->at(x).comp(b)) {
+										temp[0] = temp[0] + gColor[i][x].getColor().getArr()[0] * w1;
+										temp[1] = temp[1] + gColor[i][x].getColor().getArr()[1] * w1;
+										temp[2] = temp[2] + gColor[i][x].getColor().getArr()[2] * w1;
+									}
+									if (p->at(x).comp(c)) {
+										temp[0] = temp[0] + gColor[i][x].getColor().getArr()[0] * w2;
+										temp[1] = temp[1] + gColor[i][x].getColor().getArr()[1] * w2;
+										temp[2] = temp[2] + gColor[i][x].getColor().getArr()[2] * w2;
+									}
+								}
+								gData[m][n] = vect(temp[0], temp[1], temp[2]);
 							}
 						}
 					}
@@ -309,12 +340,13 @@ void scene::draw() {
 	}
 }
 
-vect scene::shading(vect n, obj o) { //blinn-phong
+vect scene::shading(vect n, obj o, vect v) { //blinn-phong
 	float light[3] = { 0.0 };
 	for (unsigned int i = 0; i < lights.size(); i++) {
-		light[0] = light[0] + o.getAmbient().getColor().getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] + o.getDiffuse().getColor().getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
-		light[1] = light[1] + o.getAmbient().getColor().getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] + o.getDiffuse().getColor().getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
-		light[2] = light[2] + o.getAmbient().getColor().getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] + o.getDiffuse().getColor().getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));
+		vect h = half(v, vect(h.getArr()[0], h.getArr()[1], h.getArr()[2]));
+		light[0] = light[0] + o.getAmbient().getColor().getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] + o.getDiffuse().getColor().getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2]))) + o.getSpecular().getColor().getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&vect(h.getArr()[0], h.getArr()[1], h.getArr()[2]))), o.getPhong());
+		light[1] = light[1] + o.getAmbient().getColor().getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] + o.getDiffuse().getColor().getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2]))) + o.getSpecular().getColor().getArr()[1] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&vect(h.getArr()[0], h.getArr()[1], h.getArr()[2]))), o.getPhong());
+		light[2] = light[2] + o.getAmbient().getColor().getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] + o.getDiffuse().getColor().getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2]))) + o.getSpecular().getColor().getArr()[2] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&vect(h.getArr()[0], h.getArr()[1], h.getArr()[2]))), o.getPhong());
 	}
 	return vect(light[0], light[1], light[2]);
 }
@@ -358,7 +390,7 @@ void scene::gourand() {
 		for (unsigned int j = 0; j < objects.at(i).getPoints()->size(); j++) {
 			color c = color();
 			vect v = vect(objects.at(i).getPointNorm(j).getArr()[0], objects.at(i).getPointNorm(j).getArr()[1], objects.at(i).getPointNorm(j).getArr()[2]);
-			c.setColor(shading(v, objects.at(i)));
+			c.setColor(shading(v, objects.at(i), vect(objects.at(i).getPoints()->at(j).getArr()[0] - this->eye.getArr()[0], objects.at(i).getPoints()->at(j).getArr()[1] - this->eye.getArr()[1], objects.at(i).getPoints()->at(j).getArr()[2] - this->eye.getArr()[2])));
 			gColor[i].push_back(c);
 		}
 	}
@@ -370,7 +402,12 @@ void scene::flat() {
 		std::vector<triangle> t = objects.at(i).getTriangles();
 		for (unsigned int j = 0; j < t.size(); j++) {
 			color c = color();
-			c.setColor(shading(t.at(j).getNorm(), objects.at(i)));
+			vect v = vect(0.0, 0.0, 0.0);
+			for (int k = 0; k < 3; k++) {
+				v.add(&t.at(j).getPoint(k));
+			}
+			v.multConst(1 / 3.0);
+			c.setColor(shading(t.at(j).getNorm(), objects.at(i), v));
 			fColor[i].push_back(c);
 		}
 	}
@@ -378,4 +415,16 @@ void scene::flat() {
 
 void scene::phong() {
 	//interpolate normals
+}
+
+vect scene::half(vect m, vect n) {
+	float temp[3];
+	float* mVal = m.getArr();
+	float* nVal = n.getArr();
+
+	temp[0] = (mVal[0] + nVal[0]) / (std::powf(std::powf(mVal[0] + nVal[0], 2) + std::powf(mVal[1] + nVal[1], 2) + std::powf(mVal[2] + nVal[2], 2), 0.5));
+	temp[1] = (mVal[1] + nVal[1]) / (std::powf(std::powf(mVal[0] + nVal[0], 2) + std::powf(mVal[1] + nVal[1], 2) + std::powf(mVal[2] + nVal[2], 2), 0.5));
+	temp[2] = (mVal[2] + nVal[2]) / (std::powf(std::powf(mVal[0] + nVal[0], 2) + std::powf(mVal[1] + nVal[1], 2) + std::powf(mVal[2] + nVal[2], 2), 0.5));
+
+	return vect(temp[0], temp[1], temp[2]);
 }
