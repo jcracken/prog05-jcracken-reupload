@@ -29,7 +29,7 @@ float * vect::getArr() { //return saved values
 }
 
 float vect::dotProduct(vect * other){ //dot product with another vector
-	return this->arr[0] * (other->getArr()[0]) + this->arr[1] * (other->getArr()[1]) + this->arr[2] * (other->getArr()[2]);
+	return (this->arr[0] * (other->getArr()[0]) + this->arr[1] * (other->getArr()[1]) + this->arr[2] * (other->getArr()[2]));
 }
 
 void vect::add(vect * other){ //add two vectors
