@@ -342,8 +342,8 @@ void obj::pointPopulate() {
 	for (i = 0; i < points.size(); i++) {
 		for (j = 0; j < triangles.size(); j++) {
 			if (triangles.at(j).getPoint(0).comp(points.at(i)) || triangles.at(j).getPoint(1).comp(points.at(i)) || triangles.at(j).getPoint(2).comp(points.at(i))) {
-				vect t = vect(triangles.at(j).getPoint(1).getArr()[0] - triangles.at(j).getPoint(0).getArr()[0], triangles.at(j).getPoint(1).getArr()[1] - triangles.at(j).getPoint(0).getArr()[1], triangles.at(j).getPoint(1).getArr()[2] - triangles.at(j).getPoint(0).getArr()[2]);
-				vect t1 = vect(triangles.at(j).getPoint(2).getArr()[0] - triangles.at(j).getPoint(1).getArr()[0], triangles.at(j).getPoint(2).getArr()[1] - triangles.at(j).getPoint(1).getArr()[1], triangles.at(j).getPoint(2).getArr()[2] - triangles.at(j).getPoint(1).getArr()[2]);
+				vect t = vect(points.at(faces.at(j).getArr()[1]).getArr()[0] - points.at(faces.at(j).getArr()[0]).getArr()[0], points.at(faces.at(j).getArr()[1]).getArr()[1] - points.at(faces.at(j).getArr()[0]).getArr()[1], points.at(faces.at(j).getArr()[1]).getArr()[2] - points.at(faces.at(j).getArr()[0]).getArr()[2]);
+				vect t1 = vect(points.at(faces.at(j).getArr()[2]).getArr()[0] - points.at(faces.at(j).getArr()[1]).getArr()[0], points.at(faces.at(j).getArr()[2]).getArr()[1] - points.at(faces.at(j).getArr()[1]).getArr()[1], points.at(faces.at(j).getArr()[2]).getArr()[2] - points.at(faces.at(j).getArr()[1]).getArr()[2]);
 				vect t2 = t.crossProduct(&t1);
 				triangles.at(j).populateNorm(t2);
 				temp.add(&t2);
@@ -353,6 +353,7 @@ void obj::pointPopulate() {
 		temp.multConst(1.0 / k);
 		pointNorms.push_back(vect4(temp, 0.0));
 		temp = vect(0, 0, 0);
+		k = 0;
 	}
 }
 

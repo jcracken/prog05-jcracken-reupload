@@ -39,7 +39,13 @@ void vect::add(vect * other){ //add two vectors
 }
 
 vect vect::crossProduct(vect * other) { //cross product with another vector
-	return vect(this->arr[1] * other->getArr()[2] - other->getArr()[1] * this->arr[2], other->getArr()[0] * this->arr[2] - this->arr[0] * other->getArr()[2], this->arr[0] * other->getArr()[1] - other->getArr()[0] * this->arr[1]);
+	float temp[3];
+
+	temp[0] = this->arr[1] * other->getArr()[2] - this->arr[2] * other->getArr()[1];
+	temp[1] = this->arr[0] * other->getArr()[2] - this->arr[2] * other->getArr()[0];
+	temp[2] = this->arr[0] * other->getArr()[1] - this->arr[1] * other->getArr()[0];
+
+	return vect(temp[0], temp[1], temp[2]);
 }
 
 bool vect::comp(vect other){ //if other matches this vector, return true; otherwise, return false
