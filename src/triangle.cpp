@@ -1,5 +1,4 @@
 #include "triangle.h"
-#include <iostream>
 
 triangle::triangle(){
 	//constructor

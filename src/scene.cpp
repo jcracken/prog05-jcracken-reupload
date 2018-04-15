@@ -26,7 +26,7 @@ float** scene::returnData(int type){ //converts data stored locally into a 2D fl
 			returnData[i][3 * j + 1] = temp[1];
 			returnData[i][3 * j + 2] = temp[2];
 		} else { //phong
-			temp = (this->pColor[j][i]).getColor().getArr();
+			temp = (this->pColor[i][j]).getColor().getArr();
 			returnData[i][3 * j] = temp[0];
 			returnData[i][3 * j + 1] = temp[1];
 			returnData[i][3 * j + 2] = temp[2];
@@ -365,9 +365,13 @@ vect scene::shading(vect n, vect v, vect ambient, vect diffuse, vect specular, f
 	float light[3] = { ambient.getArr()[0], ambient.getArr()[1], ambient.getArr()[2] };
 	for (unsigned int i = 0; i < lights.size(); i++) {
 		vect h = half(vect(this->eye.getArr()[0] - v.getArr()[0], this->eye.getArr()[1] - v.getArr()[1], this->eye.getArr()[2] - v.getArr()[2]), vect(lights.at(i).getLoc().getArr()[0] - v.getArr()[0], lights.at(i).getLoc().getArr()[1] - v.getArr()[1], lights.at(i).getLoc().getArr()[2] - v.getArr()[2]));
-		light[0] = light[0] + diffuse.getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0] - v.getArr()[0], lights.at(i).getLoc().getArr()[1] - v.getArr()[1], lights.at(i).getLoc().getArr()[2] - v.getArr()[2]))) + specular.getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);
+		/*light[0] = light[0] + diffuse.getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0] - v.getArr()[0], lights.at(i).getLoc().getArr()[1] - v.getArr()[1], lights.at(i).getLoc().getArr()[2] - v.getArr()[2]))) + specular.getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);
 		light[1] = light[1] + diffuse.getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0] - v.getArr()[0], lights.at(i).getLoc().getArr()[1] - v.getArr()[1], lights.at(i).getLoc().getArr()[2] - v.getArr()[2]))) + specular.getArr()[1] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);
-		light[2] = light[2] + diffuse.getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0] - v.getArr()[0], lights.at(i).getLoc().getArr()[1] - v.getArr()[1], lights.at(i).getLoc().getArr()[2] - v.getArr()[2]))) + specular.getArr()[2] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);
+		light[2] = light[2] + diffuse.getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0] - v.getArr()[0], lights.at(i).getLoc().getArr()[1] - v.getArr()[1], lights.at(i).getLoc().getArr()[2] - v.getArr()[2]))) + specular.getArr()[2] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);*/
+
+		light[0] = light[0] + diffuse.getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));//+ specular.getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);
+		light[1] = light[1] + diffuse.getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));//+ specular.getArr()[1] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);
+		light[2] = light[2] + diffuse.getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2])));//+ specular.getArr()[2] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);
 	}
 	return vect(light[0], light[1], light[2]);
 }
