@@ -61,7 +61,12 @@ void vect::set(float a, float b, float c) {
 }
 
 void vect::normalize() {
-	arr[0] = arr[0] / std::powf(std::powf(arr[0], 2.0) + std::powf(arr[1], 2.0) + std::powf(arr[2], 2.0), 0.5);
-	arr[1] = arr[1] / std::powf(std::powf(arr[0], 2.0) + std::powf(arr[1], 2.0) + std::powf(arr[2], 2.0), 0.5);
-	arr[2] = arr[2] / std::powf(std::powf(arr[0], 2.0) + std::powf(arr[1], 2.0) + std::powf(arr[2], 2.0), 0.5);
+	float temp[3];
+	temp[0] = arr[0] / std::powf(std::powf(arr[0], 2.0) + std::powf(arr[1], 2.0) + std::powf(arr[2], 2.0), 0.5);
+	temp[1] = arr[1] / std::powf(std::powf(arr[0], 2.0) + std::powf(arr[1], 2.0) + std::powf(arr[2], 2.0), 0.5);
+	temp[2] = arr[2] / std::powf(std::powf(arr[0], 2.0) + std::powf(arr[1], 2.0) + std::powf(arr[2], 2.0), 0.5);
+
+	arr[0] = temp[0];
+	arr[1] = temp[1];
+	arr[2] = temp[2];
 }

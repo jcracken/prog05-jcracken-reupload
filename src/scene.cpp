@@ -26,7 +26,7 @@ float** scene::returnData(int type){ //converts data stored locally into a 2D fl
 			returnData[i][3 * j + 1] = temp[1];
 			returnData[i][3 * j + 2] = temp[2];
 		} else { //phong
-			temp = (this->pColor[i][j]).getColor().getArr();
+			temp = (this->pColor[j][i]).getColor().getArr();
 			returnData[i][3 * j] = temp[0];
 			returnData[i][3 * j + 1] = temp[1];
 			returnData[i][3 * j + 2] = temp[2];
@@ -285,7 +285,6 @@ void scene::draw() {
 	bool pA = false;
 	bool pB = false;
 	bool pC = false;
-	float* e = this->eye.getArr();
 	for (unsigned int i = 0; i < this->objects.size(); i++) {
 		t = this->objects.at(i).getTriangles(); //we copy these over for each object because this shaves off minutes of copying over the entire object to cache over and over
 		p = this->objects.at(i).getPoints();
