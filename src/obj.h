@@ -37,7 +37,7 @@ public:
 	void setDiffuse(vect dif);
 	void setSpecular(vect spec);
 	void setPhong(float phong);
-	void pointPopulate();
+	void pointPopulate(); //populates the list of point and triangle normals
 	color getAmbient();
 	color getDiffuse();
 	color getSpecular();

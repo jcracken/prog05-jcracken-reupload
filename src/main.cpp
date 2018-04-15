@@ -46,8 +46,8 @@ int main(int argc, char** argv){
 	//create vars for main
 	ppm* image = new ppm();
 	scene* sc = new scene();
-	bool up = false;
-	int type = 0;
+	bool up = false; //update image?
+	int type = 0; //type of shading
 
 	//populate ppm
 	if(argc < 3){
@@ -113,8 +113,8 @@ int main(int argc, char** argv){
 	//Update the screen
 	SDL_RenderPresent(rendererImage);
 
-  //Variables used in the rendering loop
-  SDL_Event event;
+    //Variables used in the rendering loop
+    SDL_Event event;
 	bool quit = false;
 
 	while (!quit){
@@ -122,7 +122,7 @@ int main(int argc, char** argv){
     const Uint64 start = SDL_GetPerformanceCounter();
 
     //Clear the screen
-		SDL_RenderClear(rendererImage);
+	SDL_RenderClear(rendererImage);
 
 		//Event Polling
     //This while loop responds to mouse and keyboard commands.
@@ -135,18 +135,6 @@ int main(int argc, char** argv){
         switch (event.key.keysym.sym){
 			case SDLK_ESCAPE: //if escape, quit
 				quit = true;
-			break;
-			case SDLK_LEFT: //if left arrow key, move eye left and forward
-				up = true;
-			break;
-			case SDLK_RIGHT: //if right arrow key, move eye right and forward
-				up = true;
-			break;
-			case SDLK_UP:
-				up = true;
-			break;
-			case SDLK_DOWN:
-				up = true;
 			break;
 			case SDLK_f:
 				up = true;
@@ -166,13 +154,13 @@ int main(int argc, char** argv){
       }
     }
 
-		if(up){ //if the image was updated
-			image->setData(sc->returnData(type), sc->returnHeight(), 3 * sc->returnWidth());
-			SDL_UpdateTexture(imageTexture, NULL, image->returnData(), 3*image->returnWidth());
-			renderTexture(imageTexture, rendererImage, 0, 0);
-			SDL_RenderPresent(rendererImage);
-			up = false;
-		}
+	if(up){ //if the image was updated
+		image->setData(sc->returnData(type), sc->returnHeight(), 3 * sc->returnWidth());
+		SDL_UpdateTexture(imageTexture, NULL, image->returnData(), 3*image->returnWidth());
+		renderTexture(imageTexture, rendererImage, 0, 0);
+		SDL_RenderPresent(rendererImage);
+		up = false;
+	}
 
     //Display the frame rate to stdout, as well as current gamma value
     const Uint64 end = SDL_GetPerformanceCounter();
@@ -183,18 +171,19 @@ int main(int argc, char** argv){
     std::cout << "Frame time: " << seconds * 1000.0 << "ms" << std::endl;
   }
 
-  //After the loop finishes (when the window is closed, or escape is
-  //pressed, clean up the data that we allocated.
+    //After the loop finishes (when the window is closed, or escape is
+    //pressed, clean up the data that we allocated.
 	SDL_DestroyTexture(imageTexture);
 	SDL_DestroyRenderer(rendererImage);
 	SDL_DestroyWindow(windowImage);
 	SDL_Quit();
 
-  //write data to a SDR ppm
+    //write data to a SDR ppm
 	image->writeData(argv[2]);
 
 	//clear memory
 	delete image;
+	delete sc;
 
   return 0;
 }

@@ -68,7 +68,7 @@ class scene { //main class, used to render everything
     float** returnData(int type);
     float returnAngle();
     void acquireData(std::string name);
-	void setup();
-	void draw();
+	void setup(); //creates transformation matrix and all other initial data, including the fragments
+	void draw(); //rasterizes the fragments
 };
 #endif

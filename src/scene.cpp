@@ -132,7 +132,7 @@ void scene::acquireData(std::string name) {
 				break;
 				case 'M': //object mesh
 
-					if (!follow) {
+					if (!follow) { //read in object data
 						line = 1;
 						iss >> objName;
 						oTemp.readData(objName);
@@ -140,7 +140,7 @@ void scene::acquireData(std::string name) {
 						objects.push_back(oTemp);
 						follow = true;
 					} else {
-						iss >> temp[0] >> temp[1] >> temp[2];
+						iss >> temp[0] >> temp[1] >> temp[2]; //read in color data
 						if (line == 1) {
 							objects.at(i).setAmbient(vect(temp[0], temp[1], temp[2]));
 							line = 2;
@@ -175,26 +175,25 @@ void scene::setup() {
 	matrix mTemp, mT2;
 	unsigned int i;
 
-	for (i = 0; i < (unsigned)3; i++) {
+	for (i = 0; i < (unsigned)3; i++) { //create w vector
 		w[i] = (this->eye.getArr()[i] - this->lookat.getArr()[i]) / sqrt(powf(this->eye.getArr()[0] - this->lookat.getArr()[0], 2.0) + powf(this->eye.getArr()[1] - this->lookat.getArr()[1], 2.0) + powf(this->eye.getArr()[2] - this->lookat.getArr()[2], 2));
 	}
 	this->w = vect4(w[0], w[1], w[2], 0.0);
 
 	temp = this->up.crossProduct(&this->w);
 
-	u = temp.getArr();
+	u = temp.getArr(); //create u from w
 
-	for (i = 0; i < (unsigned)3; i++) {
+	for (i = 0; i < (unsigned)3; i++) { //normalize u
 		if (u[i] == 0.0) u[i] = 0.0;
 		else u[i] = u[i] / sqrt(powf(u[0], 2) + powf(u[1], 2) + powf(u[2], 2));
 	}
 
 	this->u = vect4(u[0], u[1], u[2], 0.0);
 
-	temp = this->w.crossProduct(&vect4(u[0], u[1], u[2], 1.0));
+	temp = this->w.crossProduct(&vect4(u[0], u[1], u[2], 1.0)); //create v from u and w
 	this->v = vect4(temp, 0.0);
 
-	float dist = powf((powf(this->eye.getArr()[0] - this->lookat.getArr()[0], 2.0)) + (powf(this->eye.getArr()[1] - this->lookat.getArr()[1], 2.0)) + (powf(this->eye.getArr()[2] - this->lookat.getArr()[2], 2.0)), 0.5);
 	float imageHeight = std::tan(this->angle * (3.141592653589793238463 / 180.0) / 2.0) * std::abs(this->nearDepth) * 2.0; //calculate image height
 	float imageWidth = std::tan((this->angle * (3.141592653589793238463 / 180.0) * (this->width / this->height)) / 2.0) * std::abs(this->nearDepth) * 2.0; //calculate image width
 
@@ -203,7 +202,7 @@ void scene::setup() {
 	this->t = imageHeight / 2.0;
 	this->b = imageHeight / -2.0;
 
-	for (i = 0; i < (unsigned)4; i++) {
+	for (i = 0; i < (unsigned)4; i++) { //clearing out matrices before calculations
 		for (int j = 0; j < 4; j++) {
 			mTemp.setVal(i, j, 0.0);
 			mT2.setVal(i, j, 0.0);
@@ -252,16 +251,16 @@ void scene::setup() {
 	M_vp.mult(&M_per, &mTemp);
 	mTemp.mult(&M_cam, &M);
 
-	this->genPixelData(imageHeight, imageWidth);
-	for (i = 0; i < objects.size(); i++) {
+	this->genPixelData(imageHeight, imageWidth); //basically create and clears out a bunch of 2D arrays
+	for (i = 0; i < objects.size(); i++) { //create point and triangle norms
 		objects.at(i).storeData();
 		objects.at(i).pointPopulate();
 	}
 
-	this->flat();
+	this->flat(); //create data for flat and gourand shading
 	this->gourand();
 	
-	for (i = 0; i < this->objects.size(); i++) {
+	for (i = 0; i < this->objects.size(); i++) { //transform all vertices
 		std::vector<vect>* t = this->objects.at(i).getPoints();
 		for (unsigned int j = 0; j < t->size(); j++) {
 			vect4 t1 = vect4(t->at(j), 1.0);
@@ -286,20 +285,20 @@ void scene::draw() {
 	bool pC = false;
 	float* e = this->eye.getArr();
 	for (unsigned int i = 0; i < this->objects.size(); i++) {
-		t = this->objects.at(i).getTriangles();
+		t = this->objects.at(i).getTriangles(); //we copy these over for each object because this shaves off minutes of copying over the entire object to cache over and over
 		p = this->objects.at(i).getPoints();
 		for (unsigned int j = 0; j < t.size(); j++) {
-			boundYmax = ceil(t.at(j).boundYMax());
+			boundYmax = ceil(t.at(j).boundYMax()); //find bounding values
 			boundYmin = floor(t.at(j).boundYMin());
 			for (unsigned int m = boundYmin; m < boundYmax; m++) {
-				boundXmax = ceil(t.at(j).boundXMax());
+				boundXmax = ceil(t.at(j).boundXMax()); //ditto
 				boundXmin = floor(t.at(j).boundXMin());
 				for (unsigned int n = boundXmin; n < boundXmax; n++) {
-					if (m < height && n < width) {
+					if (m < height && n < width) { //to make sure we're not trying to draw outside of the box
 						if (t.at(j).intersect(pixelLoc[m][n], &zTemp, &w0, &w1, &w2)) {
-							if (zTemp < z[m][n]) {
+							if (zTemp < z[m][n]) { //if z is closer
 								z[m][n] = zTemp;
-								data[m][n] = fColor[i][j].getColor();
+								data[m][n] = fColor[i][j].getColor(); //flat data stored
 								
 								a = t.at(j).getPoint(0);
 								b = t.at(j).getPoint(1);
@@ -317,7 +316,7 @@ void scene::draw() {
 								pB = false;
 								pC = false;
 
-								for (unsigned int x = 0; x < p->size() && !(pA && pB && pC); x++) {
+								for (unsigned int x = 0; x < p->size() && !(pA && pB && pC); x++) { //interpolate phong and gourand
 									if (p->at(x).comp(a)) {
 										temp[0] = temp[0] + gColor[i][x].getColor().getArr()[0] * w0;
 										temp[1] = temp[1] + gColor[i][x].getColor().getArr()[1] * w0;
@@ -346,9 +345,9 @@ void scene::draw() {
 										pC = true;
 									}
 								}
-								gData[m][n] = vect(temp[0], temp[1], temp[2]);
+								gData[m][n] = vect(temp[0], temp[1], temp[2]); //store gourand
 
-								pData[m][n] = vect(atemp[0], atemp[1], atemp[2]);
+								pData[m][n] = vect(atemp[0], atemp[1], atemp[2]); //store this data for phong; will be used after rasterization
 								pObj[m][n] = i;
 								pLocs[m][n] = vect(m, n, z[m][n]);
 							}
@@ -358,17 +357,20 @@ void scene::draw() {
 			}
 		}
 	}
-	this->phong();
+	this->phong(); //calculate phong values
 }
 
-vect scene::shading(vect n, vect v, vect ambient, vect diffuse, vect specular, float phong) { //blinn-phong
+vect scene::shading(vect n, vect v, vect ambient, vect diffuse, vect specular, float phong) { //blinn-phong calculation
 	float light[3] = { ambient.getArr()[0] * 0.5, ambient.getArr()[1] * 0.5, ambient.getArr()[2] * 0.5 };
 	for (unsigned int i = 0; i < lights.size(); i++) {
+
+		//this was the "correct" way, with l being the direction of the light; gave bad results
 		/*vect h = half(vect(this->eye.getArr()[0] - v.getArr()[0], this->eye.getArr()[1] - v.getArr()[1], this->eye.getArr()[2] - v.getArr()[2]), vect(lights.at(i).getLoc().getArr()[0] - v.getArr()[0], lights.at(i).getLoc().getArr()[1] - v.getArr()[1], lights.at(i).getLoc().getArr()[2] - v.getArr()[2]));
 		light[0] = light[0] + diffuse.getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0] - v.getArr()[0], lights.at(i).getLoc().getArr()[1] - v.getArr()[1], lights.at(i).getLoc().getArr()[2] - v.getArr()[2]))) + specular.getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);
 		light[1] = light[1] + diffuse.getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0] - v.getArr()[0], lights.at(i).getLoc().getArr()[1] - v.getArr()[1], lights.at(i).getLoc().getArr()[2] - v.getArr()[2]))) + specular.getArr()[1] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);
 		light[2] = light[2] + diffuse.getArr()[2] * lights.at(i).getCol().getColor().getArr()[2] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0] - v.getArr()[0], lights.at(i).getLoc().getArr()[1] - v.getArr()[1], lights.at(i).getLoc().getArr()[2] - v.getArr()[2]))) + specular.getArr()[2] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);*/
 
+		//this is the "wrong" way, with l being the light's location; gives better results
 		vect h = half(vect(this->eye.getArr()[0] - v.getArr()[0], this->eye.getArr()[1] - v.getArr()[1], this->eye.getArr()[2] - v.getArr()[2]), vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2]));
 		light[0] = light[0] + diffuse.getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2]))) + specular.getArr()[0] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);
 		light[1] = light[1] + diffuse.getArr()[1] * lights.at(i).getCol().getColor().getArr()[1] * std::max(0.0f, n.dotProduct(&vect(lights.at(i).getLoc().getArr()[0], lights.at(i).getLoc().getArr()[1], lights.at(i).getLoc().getArr()[2]))) + specular.getArr()[1] * lights.at(i).getCol().getColor().getArr()[0] * std::powf(std::max(0.0f, n.dotProduct(&h)), phong);
@@ -377,6 +379,7 @@ vect scene::shading(vect n, vect v, vect ambient, vect diffuse, vect specular, f
 	return vect(light[0], light[1], light[2]);
 }
 
+//basically, c throws a hissy fit if you try to declare a 2d array with non-static values, so this was the compromise
 void scene::genPixelData(float imageHeight, float imageWidth) {
 	data = new vect*[this->height];
 	gData = new vect*[this->height];
@@ -401,14 +404,14 @@ void scene::genPixelData(float imageHeight, float imageWidth) {
 	}
 }
 
-void scene::gourand() {
+void scene::gourand() { //calculate gourand values
 	std::vector<vect>* p;
 	vect ambient, diffuse, specular;
 	float phong;
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		gColor.push_back(std::vector<color>());
 		p = objects.at(i).getPoints();
-		ambient = objects.at(i).getAmbient().getColor();
+		ambient = objects.at(i).getAmbient().getColor(); //copying these over saves us minutes of time
 		diffuse = objects.at(i).getDiffuse().getColor();
 		specular = objects.at(i).getSpecular().getColor();
 		phong = objects.at(i).getPhong();
@@ -421,12 +424,12 @@ void scene::gourand() {
 	}
 }
 
-void scene::flat() {
+void scene::flat() { //calculate flat values
 	vect ambient, diffuse, specular;
 	float phong;
 	for (unsigned int i = 0; i < objects.size(); i++) {
 		fColor.push_back(std::vector<color>());
-		std::vector<triangle> t = objects.at(i).getTriangles();
+		std::vector<triangle> t = objects.at(i).getTriangles(); //copying these over saves us minutes of time
 		ambient = objects.at(i).getAmbient().getColor();
 		diffuse = objects.at(i).getDiffuse().getColor();
 		specular = objects.at(i).getSpecular().getColor();
@@ -444,7 +447,7 @@ void scene::flat() {
 	}
 }
 
-void scene::phong() {
+void scene::phong() { //calculate phong values
 	float* e = this->eye.getArr();
 	vect ambient, diffuse, specular;
 	float phong;
@@ -453,7 +456,7 @@ void scene::phong() {
 		for (int j = 0; j < this->width; j++) {
 			color c = color();
 			vect v = vect(pData[i][j].getArr()[0], pData[i][j].getArr()[1], pData[i][j].getArr()[2]);
-			if (pObj[i][j] == INT_MAX) c.setColor(vect(0, 0, 0));
+			if (pObj[i][j] == INT_MAX) c.setColor(vect(0, 0, 0)); //only do this if there are actual values for this pixel
 			else {
 				ambient = objects.at(pObj[i][j]).getAmbient().getColor();
 				diffuse = objects.at(pObj[i][j]).getDiffuse().getColor();
@@ -466,7 +469,7 @@ void scene::phong() {
 	}
 }
 
-vect scene::half(vect m, vect n) {
+vect scene::half(vect m, vect n) { //calculates half vector for specular
 	float temp[3];
 	float* mVal = m.getArr();
 	float* nVal = n.getArr();

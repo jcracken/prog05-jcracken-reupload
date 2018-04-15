@@ -21,8 +21,8 @@ public:
 	vect getPoint(int num);
 	edge* getEdge(int num);
 	void populateNorm(vect n);
-	bool intersect(vect v, float* z, float* w0, float* w1, float* w2);
-	float boundXMin();
+	bool intersect(vect v, float* z, float* w0, float* w1, float* w2); //returns if a ray intersects or not, as well as the interpolated z value and the barycentric coordinates
+	float boundXMin(); //these four give the bounding box
 	float boundYMin();
 	float boundXMax();
 	float boundYMax();

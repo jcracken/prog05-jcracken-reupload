@@ -32,25 +32,27 @@ void triangle::populateNorm(vect n) {
 	this->norm = n;
 }
 
-bool triangle::intersect(vect v, float* z, float* w0, float* w1, float* w2) { //todo
+bool triangle::intersect(vect v, float* z, float* w0, float* w1, float* w2) { //barycentric calculations
 	bool ret = true;
 
-	float area = edgeFunction(*this->points.at(0), *this->points.at(1), *this->points.at(2));
-	*w0 = edgeFunction(*this->points.at(1), *this->points.at(2), v);
+	float area = edgeFunction(*this->points.at(0), *this->points.at(1), *this->points.at(2)); //find area
+	*w0 = edgeFunction(*this->points.at(1), *this->points.at(2), v); //find area of each of the smaller triangles in barycentric rep
 	*w1 = edgeFunction(*this->points.at(2), *this->points.at(0), v);
 	*w2 = edgeFunction(*this->points.at(0), *this->points.at(1), v);
-	*w0 /= area;
+	*w0 /= area; //normalize
 	*w1 /= area;
 	*w2 /= area;
-	ret &= ((*w0) >= 0.0);
+	ret &= ((*w0) >= 0.0); //check to see all three barycentric values are greater than0
 	ret &= ((*w1) >= 0.0);
 	ret &= ((*w2) >= 0.0);
 
+	//interpolate z-value
 	*z = *w0 * (this->points.at(0)->getArr()[2]) + *w1 * (this->points.at(1)->getArr()[1]) + *w2 * (this->points.at(2)->getArr()[2]);
 
 	return ret;
 }
 
+//the next four return bounding box values
 float triangle::boundXMin() {
 	float min = points.at(0)->getArr()[0];
 	for (unsigned int i = 0; i < points.size(); i++) {
@@ -87,6 +89,6 @@ vect triangle::getNorm() {
 	return norm;
 }
 
-float triangle::edgeFunction(vect a, vect b, vect c) {
+float triangle::edgeFunction(vect a, vect b, vect c) { //used for barycentric coordinates
 	return (c.getArr()[0] - a.getArr()[0]) * (b.getArr()[1] - a.getArr()[1]) - (c.getArr()[1] - a.getArr()[1]) * (b.getArr()[0] - a.getArr()[0]);
 }

@@ -1,6 +1,6 @@
 #include "matrix.h"
 
-matrix::matrix(){
+matrix::matrix(){ //by default, 4x4
 	this->mat.resize(4, std::vector<float>(4, 0));
 }
 
@@ -16,7 +16,7 @@ float matrix::getVal(int x, int y){
 	return mat[x][y];
 }
 
-void matrix::mult(matrix * other, matrix * ret){
+void matrix::mult(matrix * other, matrix * ret){ //multiply against another matrix
 	int i, j, k = 0;
 	for (i = 0; i < 4; i++) {
 		for (j = 0; j < 4; j++) {
@@ -29,7 +29,7 @@ void matrix::mult(matrix * other, matrix * ret){
 	}
 }
 
-void matrix::mult(vect4 * other, matrix * ret){
+void matrix::mult(vect4 * other, matrix * ret){ //multiply against a vect
 	int i, j, k = 0;
 	for (i = 0; i < 4; i++) {
 		float temp = 0.0;
