@@ -47,7 +47,7 @@ bool triangle::intersect(vect v, float* z, float* w0, float* w1, float* w2) { //
 	ret &= ((*w2) >= 0.0);
 
 	//interpolate z-value
-	*z = *w0 * (this->points.at(0)->getArr()[2]) + *w1 * (this->points.at(1)->getArr()[1]) + *w2 * (this->points.at(2)->getArr()[2]);
+	*z = *w0 * (this->points.at(0)->getArr()[2]) + *w1 * (this->points.at(1)->getArr()[2]) + *w2 * (this->points.at(2)->getArr()[2]);
 
 	return ret;
 }

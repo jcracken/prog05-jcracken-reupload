@@ -102,9 +102,8 @@ void ppm::setData(float** data, int height, int width){ //if float array is pass
   if(min < 0.0) min = 0.0;
   for(i = 0; i < height; i++){
     for(j = 0; j < width; j++){
+	  if (data[i][j] >= 1.0) data[i][j] = 1.0;
       tempData[i][j] = (data[i][j] - min) * 255;
-      if(tempData[i][j] < 0) tempData[i][j] = 0;
-      if(tempData[i][j] > 255) tempData[i][j] = 255;
       this->data[k] = tempData[i][j];
       k++;
     }

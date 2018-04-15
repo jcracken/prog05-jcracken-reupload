@@ -26,7 +26,7 @@ float** scene::returnData(int type){ //converts data stored locally into a 2D fl
 			returnData[i][3 * j + 1] = temp[1];
 			returnData[i][3 * j + 2] = temp[2];
 		} else { //phong
-			temp = (this->pColor[j][i]).getColor().getArr();
+			temp = (this->pColor[i][j]).getColor().getArr();
 			returnData[i][3 * j] = temp[0];
 			returnData[i][3 * j + 1] = temp[1];
 			returnData[i][3 * j + 2] = temp[2];
@@ -297,7 +297,7 @@ void scene::draw() {
 				for (unsigned int n = boundXmin; n < boundXmax; n++) {
 					if (m < height && n < width) { //to make sure we're not trying to draw outside of the box
 						if (t.at(j).intersect(pixelLoc[m][n], &zTemp, &w0, &w1, &w2)) {
-							if (zTemp < z[m][n]) { //if z is closer
+							if (zTemp > z[m][n]) { //if z is closer
 								z[m][n] = zTemp;
 								data[m][n] = fColor[i][j].getColor(); //flat data stored
 								
@@ -413,7 +413,7 @@ void scene::genPixelData(float imageHeight, float imageWidth) {
 		z[i] = new float[this->width];
 		for (int j = 0; j < this->width; j++) {
 			pixelLoc[i][j] = vect(imageWidth / -2.0 + j, imageHeight / -2.0 + i, nearDepth);
-			z[i][j] = INT_MAX;
+			z[i][j] = -INT_MAX;
 			pObj[i][j] = INT_MAX;
 		}
 	}
@@ -433,7 +433,7 @@ void scene::gourand() { //calculate gourand values
 		for (unsigned int j = 0; j < p->size(); j++) {
 			color c = color();
 			vect v = vect(objects.at(i).getPointNorm(j).getArr()[0], objects.at(i).getPointNorm(j).getArr()[1], objects.at(i).getPointNorm(j).getArr()[2]);
-			c.setColor(shading(v, vect(p->at(j).getArr()[0] - this->eye.getArr()[0], p->at(j).getArr()[1] - this->eye.getArr()[1], p->at(j).getArr()[2] - this->eye.getArr()[2]), ambient, diffuse, specular, phong));
+			c.setColor(shading(v, vect(p->at(j).getArr()[0], p->at(j).getArr()[1], p->at(j).getArr()[2]), ambient, diffuse, specular, phong));
 			gColor[i].push_back(c);
 		}
 	}
@@ -464,7 +464,6 @@ void scene::flat() { //calculate flat values
 }
 
 void scene::phong() { //calculate phong values
-	float* e = this->eye.getArr();
 	vect ambient, diffuse, specular;
 	float phong;
 	for (int i = 0; i < this->height; i++) {
@@ -478,7 +477,7 @@ void scene::phong() { //calculate phong values
 				diffuse = objects.at(pObj[i][j]).getDiffuse().getColor();
 				specular = objects.at(pObj[i][j]).getSpecular().getColor();
 				phong = objects.at(pObj[i][j]).getPhong();
-				c.setColor(shading(v, vect(pLocs[i][j].getArr()[0] - e[0], pLocs[i][j].getArr()[1] - e[1], pLocs[i][j].getArr()[2] - e[2]), ambient, diffuse, specular, phong));
+				c.setColor(shading(v, vect(pLocs[i][j].getArr()[0], pLocs[i][j].getArr()[1], pLocs[i][j].getArr()[2]), ambient, diffuse, specular, phong));
 			}
 			pColor[i].push_back(c);
 		}
