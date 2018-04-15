@@ -1,4 +1,4 @@
-##Notes
+## Notes
 
 I've gotten the code to a point where it renders everything, but there is weird artifacting all over the sphere. First, in the form of weird gray shapes being rendered over the sphere. This might be related to my shading algorithm, which doesn't seem to apply the specular effect properly. It's a shame, because as you flip between the three shading types, you can make out under the artifacts that it seems to somewhat work? You can see the triangle edges disappear going from flat to gourand, and phong seems to be even smoother. The second source of artifacting are weird symmetric black lines on the shape. They just randomly appeared after I fixed a bug related to triangle normal calculation. I have zero idea what caused them.
 
@@ -10,7 +10,7 @@ But, as far as I can tell, the parsing works perfectly, the transformation matri
 
 The only issues I can find are: specular shading not working properly, the weird artifacting, and the second shape doesn't get rendered.
 
-##References
+## References
 
 This directory includes both some models in Wavefront .obj format as well as some scene files to test the rasterizer
 
