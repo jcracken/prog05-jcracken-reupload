@@ -59,3 +59,9 @@ void vect::set(float a, float b, float c) {
 	this->arr[1] = b;
 	this->arr[2] = c;
 }
+
+void vect::normalize() {
+	arr[0] = arr[0] / std::powf(std::powf(arr[0], 2.0) + std::powf(arr[1], 2.0) + std::powf(arr[2], 2.0), 0.5);
+	arr[1] = arr[1] / std::powf(std::powf(arr[0], 2.0) + std::powf(arr[1], 2.0) + std::powf(arr[2], 2.0), 0.5);
+	arr[2] = arr[2] / std::powf(std::powf(arr[0], 2.0) + std::powf(arr[1], 2.0) + std::powf(arr[2], 2.0), 0.5);
+}

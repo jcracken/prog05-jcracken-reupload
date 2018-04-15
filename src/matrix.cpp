@@ -30,7 +30,7 @@ void matrix::mult(matrix * other, matrix * ret){ //multiply against another matr
 }
 
 void matrix::mult(vect4 * other, matrix * ret){ //multiply against a vect
-	int i, j, k = 0;
+	int i, k = 0;
 	for (i = 0; i < 4; i++) {
 		float temp = 0.0;
 		for (k = 0; k < 4; k++) {
