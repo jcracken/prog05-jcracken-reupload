@@ -16,17 +16,17 @@ float** scene::returnData(int type){ //converts data stored locally into a 2D fl
   for(i = 0; i < this->height; i++){
     for(j = 0; j < this->width; j++){
 		if (type == 0) { //flat
-			temp = (this->data[i][j]).getArr();
+			temp = (this->data[this->height - i - 1][j]).getArr();
 			returnData[i][3 * j] = temp[0];
 			returnData[i][3 * j + 1] = temp[1];
 			returnData[i][3 * j + 2] = temp[2];
 		} else if (type == 1) { //gourand
-			temp = (this->gData[i][j]).getArr();
+			temp = (this->gData[this->height - i - 1][j]).getArr();
 			returnData[i][3 * j] = temp[0];
 			returnData[i][3 * j + 1] = temp[1];
 			returnData[i][3 * j + 2] = temp[2];
 		} else { //phong
-			temp = (this->pColor[i][j]).getColor().getArr();
+			temp = (this->pColor[this->height - i - 1][j]).getColor().getArr();
 			returnData[i][3 * j] = temp[0];
 			returnData[i][3 * j + 1] = temp[1];
 			returnData[i][3 * j + 2] = temp[2];
